@@ -1,6 +1,8 @@
 package boardgame;
 
-public class BoardException extends RuntimeException {
+import application.GameException;
+
+public class BoardException extends GameException {
     public BoardException(String message) {
         super(message);
     }

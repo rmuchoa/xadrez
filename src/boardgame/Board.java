@@ -4,14 +4,14 @@ public class Board {
 
     private final int totalRows;
     private final int totalColumns;
-    private final Piece[][] boardPieces;
+    private final BoardPiece[][] boardPieces;
 
     public Board(int totalRows, int totalColumns) {
         validateBoardSizing(totalRows, totalColumns);
 
         this.totalRows = totalRows;
         this.totalColumns = totalColumns;
-        this.boardPieces = new Piece[totalRows][totalColumns];
+        this.boardPieces = new BoardPiece[totalRows][totalColumns];
     }
 
     public int getTotalRows() {
@@ -22,24 +22,36 @@ public class Board {
         return totalColumns;
     }
 
-    public Piece getBoardPiecePlacedOn(Position position) {
+    public BoardPiece getBoardPiecePlacedOn(BoardPosition position) {
         return getBoardPiecePlacedOn(position.getRow(), position.getColumn());
     }
 
-    public Piece getBoardPiecePlacedOn(int row, int column) {
+    public BoardPiece getBoardPiecePlacedOn(int row, int column) {
         validatePositionExistence(row, column);
 
         return boardPieces[row][column];
     }
 
-    public void placePieceOn(Position position, Piece piece) {
+    public void placePieceOn(BoardPosition position, BoardPiece boardPiece) {
         validatePositionAvailability(position);
 
-        boardPieces[position.getRow()][position.getColumn()] = piece;
-        piece.setPosition(position);
+        boardPieces[position.getRow()][position.getColumn()] = boardPiece;
+        boardPiece.placeOnPosition(position);
     }
 
-    public boolean positionExists(Position position) {
+    public BoardPiece removePieceFrom(BoardPosition position) {
+        validatePositionExistence(position.getRow(), position.getColumn());
+
+        if (isBoardPositionEmpty(position))
+            return null;
+
+        BoardPiece boardPiece = getBoardPiecePlacedOn(position);
+        boardPieces[position.getRow()][position.getColumn()] = null;
+        boardPiece.takeOutOfPosition();
+        return boardPiece;
+    }
+
+    public boolean positionExists(BoardPosition position) {
         return positionExists(position.getRow(), position.getColumn());
     }
 
@@ -78,15 +90,19 @@ public class Board {
         return row < totalRows;
     }
 
-    private void validatePositionAvailability(Position position) {
+    private void validatePositionAvailability(BoardPosition position) {
         if (isBoardPositionOccupied(position))
             throw new BoardException("There is already a piece on position " + position);
     }
 
-    public boolean isBoardPositionOccupied(Position position) {
-        validatePositionExistence(position.getRow(), position.getColumn());
-        
-        return getBoardPiecePlacedOn(position) != null;
+    public boolean isBoardPositionOccupied(BoardPosition position) {
+        return !isBoardPositionEmpty(position);
+    }
+
+    public boolean isBoardPositionEmpty(BoardPosition boardPosition) {
+        validatePositionExistence(boardPosition.getRow(), boardPosition.getColumn());
+
+        return getBoardPiecePlacedOn(boardPosition) == null;
     }
 
     private void validatePositionExistence(int row, int column) {

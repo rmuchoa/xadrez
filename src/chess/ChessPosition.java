@@ -1,6 +1,6 @@
 package chess;
 
-import boardgame.Position;
+import boardgame.BoardPosition;
 
 public class ChessPosition {
 
@@ -40,8 +40,8 @@ public class ChessPosition {
         return row < 1 || row > 8;
     }
 
-    protected Position toBoardPosition() {
-        return new Position(toBoardPositionRow(), toBoardPositionColumn());
+    protected BoardPosition toBoardPosition() {
+        return new BoardPosition(toBoardPositionRow(), toBoardPositionColumn());
     }
 
     private int toBoardPositionRow() {
@@ -52,16 +52,16 @@ public class ChessPosition {
         return column - 'a';
     }
 
-    protected static ChessPosition fromPosition(Position position) {
-        return new ChessPosition(toChessPositionColumn(position), toChessPositionRow(position));
+    protected static ChessPosition fromPosition(BoardPosition boardPosition) {
+        return new ChessPosition(toChessPositionColumn(boardPosition), toChessPositionRow(boardPosition));
     }
 
-    private static char toChessPositionColumn(Position position) {
-        return (char) ('a' - position.getColumn());
+    private static char toChessPositionColumn(BoardPosition boardPosition) {
+        return (char) ('a' - boardPosition.getColumn());
     }
 
-    private static int toChessPositionRow(Position position) {
-        return 8 - position.getRow();
+    private static int toChessPositionRow(BoardPosition boardPosition) {
+        return 8 - boardPosition.getRow();
     }
 
 }
