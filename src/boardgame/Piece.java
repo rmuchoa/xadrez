@@ -2,8 +2,8 @@ package boardgame;
 
 public class Piece {
 
+    private final Board board;
     private Position position;
-    private Board board;
 
     public Piece(Board board) {
         this.board = board;
