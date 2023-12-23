@@ -1,9 +1,13 @@
 package application;
 
+import static chess.ChessMatch.CHESS_BOARD_SIZE;
+
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
+import chess.pieces.NoPlaced;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class UI {
@@ -29,9 +33,9 @@ public class UI {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
-    public static void printBoard(ChessPiece[][] pieces) {
+    public static void printBoard(ChessPiece[][] pieces, List<ChessPosition> possibleMovements) {
         for (int row=0; row < pieces.length; row++)
-            printBoardRow(row, pieces);
+            printBoardRow(row, pieces, possibleMovements);
 
         printColumnLabels();
     }
@@ -56,29 +60,54 @@ public class UI {
     }
 
     private static void printColumnLabels() {
-        System.out.println("  a b c d e f g h ");
+        System.out.println("   a  b  c  d  e  f  g  h  ");
     }
 
-    private static void printBoardRow(int row, ChessPiece[][] pieces) {
+    private static void printBoardRow(int row, ChessPiece[][] pieces, List<ChessPosition> possibleMovements) {
         printRowLabel(row);
 
-        for(int column=0; column< pieces.length; column++)
-            printPiece(pieces[row][column]);
+        for(int column=0; column< pieces.length; column++) {
+            ChessPiece piece = getPieceFrom(pieces, row, column);
+            printPiece(piece, possibleMovements);
+        }
 
         System.out.println();
     }
 
-    private static void printRowLabel(int row) {
-        System.out.print((8 - row) + " ");
+    private static ChessPiece getPieceFrom(ChessPiece[][] pieces, int row, int column) {
+        ChessPiece piece = pieces[row][column];
+
+        if (piece == null) {
+            piece = NoPlaced.builder().build();
+            piece.placeOnPosition(ChessPosition.builder().boardPostion(row, column).build());
+        }
+
+        return piece;
     }
 
-    public static void printPiece(ChessPiece piece) {
-        if (piece == null)
-            System.out.print("-");
+    private static void printRowLabel(int row) {
+        System.out.print((CHESS_BOARD_SIZE - row) + "  ");
+    }
+
+    public static void printPiece(ChessPiece piece, List<ChessPosition> possibleMovements) {
+        if (possibleMovements != null) {
+            ChessPosition chessPosition = piece.getPosition();
+            printPiece(piece, possibleMovements.stream().anyMatch(chessPosition::equals));
+        } else {
+            printPiece(piece, false);
+        }
+    }
+
+    public static void printPiece(ChessPiece piece, boolean background) {
+        if (background)
+            System.out.print(ANSI_BLUE_BACKGROUND);
+
+        if (piece instanceof NoPlaced)
+            System.out.print(piece+ANSI_RESET);
         else
             printColoredPiece(piece);
 
-        System.out.print(' ');
+        System.out.print("  ");
     }
 
     private static void printColoredPiece(ChessPiece piece) {

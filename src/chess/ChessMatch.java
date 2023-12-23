@@ -4,6 +4,7 @@ import boardgame.Board;
 
 import chess.pieces.King;
 import chess.pieces.Rook;
+import java.util.List;
 
 public class ChessMatch {
 
@@ -28,18 +29,25 @@ public class ChessMatch {
         return chessPieces;
     }
 
-    public ChessPiece performChessMove(ChessPosition source, ChessPosition target) {
-        validateSourcePositionExistence(source);
-        validateTargetPositionAvailability(source, target);
-
-        return makeMove(source, target);
+    public List<ChessPosition> getAllAvailableTargetFor(ChessPosition sourcePosition) {
+        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(sourcePosition);
+        validateMovementOriginFrom(sourcePosition);
+        
+        return piece.getAllAvailableTargetPositions();
     }
 
-    private ChessPiece makeMove(ChessPosition source, ChessPosition target) {
-        ChessPiece movingPiece = (ChessPiece) board.removePieceFrom(source);
-        ChessPiece capturedPiece = (ChessPiece) board.removePieceFrom(target);
+    public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+        validateMovementOriginFrom(sourcePosition);
+        validateTargetPositionAvailability(sourcePosition, targetPosition);
 
-        board.placePieceOn(target, movingPiece);
+        return makeMove(sourcePosition, targetPosition);
+    }
+
+    private ChessPiece makeMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+        ChessPiece movingPiece = (ChessPiece) board.removePieceFrom(sourcePosition);
+        ChessPiece capturedPiece = (ChessPiece) board.removePieceFrom(targetPosition);
+
+        board.placePieceOn(targetPosition, movingPiece);
 
         return capturedPiece;
     }
@@ -65,28 +73,28 @@ public class ChessMatch {
         placeNewPiece('d', 8, new King(board, Color.BLACK));
     }
 
-    private void validateSourcePositionExistence(ChessPosition source) {
-        validatePiecePresenceOn(source);
-        validatePieceMobility(source);
+    private void validateMovementOriginFrom(ChessPosition sourcePosition) {
+        validatePiecePresenceOn(sourcePosition);
+        validatePieceMobility(sourcePosition);
     }
 
-    private void validatePieceMobility(ChessPosition source) {
-        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(source);
+    private void validatePieceMobility(ChessPosition sourcePosition) {
+        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(sourcePosition);
 
         if (piece.hasNoAvailableMovements())
             throw new ChessException("There is no possible movements for the chosen " + piece + " piece");
     }
 
-    private void validatePiecePresenceOn(ChessPosition source) {
-        if (board.isBoardPositionEmpty(source))
-            throw new ChessException("There is no piece present on source position " + source);
+    private void validatePiecePresenceOn(ChessPosition sourcePosition) {
+        if (board.isBoardPositionEmpty(sourcePosition))
+            throw new ChessException("There is no piece present on source position " + sourcePosition);
     }
 
-    private void validateTargetPositionAvailability(ChessPosition source, ChessPosition target) {
-        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(source);
+    private void validateTargetPositionAvailability(ChessPosition sourcePosition, ChessPosition targetPosition) {
+        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(sourcePosition);
 
-        if (piece.canNotTargetThis(target))
-            throw new ChessException("The chosen piece cannot move to target position " + target);
+        if (piece.canNotTargetThis(targetPosition))
+            throw new ChessException("The chosen piece cannot move to target position " + targetPosition);
 
     }
 

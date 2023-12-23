@@ -176,6 +176,12 @@ public class ChessPosition extends BoardPosition {
             return this;
         }
 
+        public ChessPositionBuilder boardPostion(int row, int column) {
+            this.chessColumn = (char) ('a' + column);
+            this.chessRow = CHESS_BOARD_SIZE - row;
+            return this;
+        }
+
         public ChessPosition build() {
             return new ChessPosition(chessColumn, chessRow);
         }
