@@ -2,25 +2,25 @@ package boardgame;
 
 public class BoardPosition {
 
-    private final int row;
-    private final int column;
+    private final int matrixRow;
+    private final int matrixColumn;
 
-    public BoardPosition(int row, int column) {
-        this.row = row;
-        this.column = column;
+    public BoardPosition(int matrixRow, int matrixColumn) {
+        this.matrixRow = matrixRow;
+        this.matrixColumn = matrixColumn;
     }
 
-    public int getRow() {
-        return row;
+    public int getMatrixRow() {
+        return matrixRow;
     }
 
-    public int getColumn() {
-        return column;
+    public int getMatrixColumn() {
+        return matrixColumn;
     }
 
     @Override
     public String toString() {
-        return "board[" + row + "][" + column + "]";
+        return "board[" + matrixRow + "][" + matrixColumn + "]";
     }
 
     @Override
@@ -31,43 +31,8 @@ public class BoardPosition {
 
     private boolean equals(BoardPosition position) {
         return position != null
-            && hasEqualRow(position)
-            && hasEqualColumn(position);
-    }
-
-    private boolean hasEqualRow(BoardPosition position) {
-        return row == position.getRow();
-    }
-
-    private boolean hasEqualColumn(BoardPosition position) {
-        return column == position.getColumn();
-    }
-
-    public static class BoardPositionBuilder {
-
-        private int row;
-        private int column;
-
-        private BoardPositionBuilder() {}
-
-        public static BoardPositionBuilder builder() {
-            return new BoardPositionBuilder();
-        }
-
-        public BoardPositionBuilder row(int row) {
-            this.row = row;
-            return this;
-        }
-
-        public BoardPositionBuilder column(int column) {
-            this.column = column;
-            return this;
-        }
-
-        public BoardPosition build() {
-            return new BoardPosition(row, column);
-        }
-
+            && matrixRow == position.getMatrixRow()
+            && matrixColumn == position.getMatrixColumn();
     }
 
 }

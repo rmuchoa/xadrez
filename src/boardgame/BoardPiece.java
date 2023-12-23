@@ -2,10 +2,10 @@ package boardgame;
 
 import java.util.List;
 
-public abstract class BoardPiece {
+public abstract class BoardPiece <T extends BoardPosition> {
 
     private final Board board;
-    private BoardPosition position;
+    private T position;
 
     public BoardPiece(Board board) {
         this.board = board;
@@ -15,11 +15,11 @@ public abstract class BoardPiece {
         return board;
     }
 
-    public BoardPosition getPosition() {
+    public T getPosition() {
         return position;
     }
 
-    public void placeOnPosition(BoardPosition position) {
+    public void placeOnPosition(T position) {
         this.position = position;
     }
 
@@ -27,28 +27,28 @@ public abstract class BoardPiece {
         position = null;
     }
 
-    public abstract List<BoardPosition> getAllAvailableTargetPositions();
+    public abstract List<T> getAllAvailableTargetPositions();
 
-    public boolean isNotAnAvailableTarget(BoardPosition target) {
-        return !isAnAvailableTarget(target);
+    public boolean canNotTargetThis(T position) {
+        return !canTargetThis(position);
     }
 
-    public boolean isAnAvailableTarget(BoardPosition target) {
+    public boolean canTargetThis(T position) {
         return getAllAvailableTargetPositions().stream()
-            .anyMatch(target::equals);
+            .anyMatch(position::equals);
     }
 
-    public boolean thereIsNoneAvailableTargetPosition() {
+    public boolean hasNoAvailableMovements() {
         return getAllAvailableTargetPositions().stream()
             .findAny()
             .isEmpty();
     }
 
-    protected BoardPiece getBoardPiecePlacedOn(BoardPosition position) {
+    protected BoardPiece getBoardPiecePlacedOn(T position) {
         return board.getPiecePlacedOn(position);
     }
 
-    protected boolean doesNotExistsOnBoard(BoardPosition position) {
+    protected boolean doesNotExistsOnBoard(T position) {
         return board.doesNotExists(position);
     }
 

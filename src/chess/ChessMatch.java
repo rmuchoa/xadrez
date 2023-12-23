@@ -1,8 +1,7 @@
 package chess;
 
 import boardgame.Board;
-import boardgame.BoardPiece;
-import boardgame.BoardPosition;
+
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -33,13 +32,12 @@ public class ChessMatch {
         validateSourcePositionExistence(source);
         validateTargetPositionAvailability(source, target);
 
-        BoardPiece capturedPiece = makeMove(source.toBoardPosition(), target.toBoardPosition());
-        return (ChessPiece) capturedPiece;
+        return makeMove(source, target);
     }
 
-    private BoardPiece makeMove(BoardPosition source, BoardPosition target) {
-        BoardPiece movingPiece = board.removePieceFrom(source);
-        BoardPiece capturedPiece = board.removePieceFrom(target);
+    private ChessPiece makeMove(ChessPosition source, ChessPosition target) {
+        ChessPiece movingPiece = (ChessPiece) board.removePieceFrom(source);
+        ChessPiece capturedPiece = (ChessPiece) board.removePieceFrom(target);
 
         board.placePieceOn(target, movingPiece);
 
@@ -47,8 +45,8 @@ public class ChessMatch {
     }
 
     private void placeNewPiece(char column, int row, ChessPiece piece) {
-        ChessPosition chessPosition = new ChessPosition(column, row);
-        board.placePieceOn(chessPosition.toBoardPosition(), piece);
+        ChessPosition position = ChessPosition.builder().chessColumn(column).chessRow(row).build();
+        board.placePieceOn(position, piece);
     }
 
     private void initialSetup() {
@@ -68,23 +66,26 @@ public class ChessMatch {
     }
 
     private void validateSourcePositionExistence(ChessPosition source) {
-        BoardPosition sourcePosition = source.toBoardPosition();
+        validatePiecePresenceOn(source);
+        validatePieceMobility(source);
+    }
 
-        if (board.isBoardPositionEmpty(sourcePosition))
-            throw new ChessException("There is no piece on source position " + source);
+    private void validatePieceMobility(ChessPosition source) {
+        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(source);
 
-        BoardPiece piece = board.getPiecePlacedOn(sourcePosition);
-
-        if (piece.thereIsNoneAvailableTargetPosition())
+        if (piece.hasNoAvailableMovements())
             throw new ChessException("There is no possible movements for the chosen " + piece + " piece");
+    }
 
+    private void validatePiecePresenceOn(ChessPosition source) {
+        if (board.isBoardPositionEmpty(source))
+            throw new ChessException("There is no piece present on source position " + source);
     }
 
     private void validateTargetPositionAvailability(ChessPosition source, ChessPosition target) {
-        BoardPosition sourcePosition = source.toBoardPosition();
-        BoardPiece piece = board.getPiecePlacedOn(sourcePosition);
+        ChessPiece piece = (ChessPiece) board.getPiecePlacedOn(source);
 
-        if (piece.isNotAnAvailableTarget(target.toBoardPosition()))
+        if (piece.canNotTargetThis(target))
             throw new ChessException("The chosen piece cannot move to target position " + target);
 
     }

@@ -2,9 +2,8 @@ package chess;
 
 import boardgame.Board;
 import boardgame.BoardPiece;
-import boardgame.BoardPosition;
 
-public abstract class ChessPiece extends BoardPiece {
+public abstract class ChessPiece extends BoardPiece<ChessPosition> {
 
     private final Color color;
 
@@ -24,27 +23,15 @@ public abstract class ChessPiece extends BoardPiece {
         if (thereIsNoPiecePlacedOn(position))
             return true;
 
-        return thereIsAnOpponentPiecePlacedOn(position);
-    }
-
-    protected boolean doesNotExistsOnBoard(ChessPosition position) {
-        return doesNotExistsOnBoard(position.toBoardPosition());
+        return thereIsAnOpponentPlacedOn(position);
     }
 
     protected boolean thereIsNoPiecePlacedOn(ChessPosition position) {
-        return thereIsNoPiecePlacedOn(position.toBoardPosition());
+        return getBoardPiecePlacedOn(position) == null;
     }
 
-    protected boolean thereIsNoPiecePlacedOn(BoardPosition boardPosition) {
-        return getBoardPiecePlacedOn(boardPosition) == null;
-    }
-
-    protected boolean thereIsAnOpponentPiecePlacedOn(ChessPosition position) {
-        return thereIsAnOpponentPiecePlacedOn(position.toBoardPosition());
-    }
-
-    protected boolean thereIsAnOpponentPiecePlacedOn(BoardPosition boardPosition) {
-        ChessPiece chessPiece = (ChessPiece) getBoardPiecePlacedOn(boardPosition);
+    protected boolean thereIsAnOpponentPlacedOn(ChessPosition position) {
+        ChessPiece chessPiece = (ChessPiece) getBoardPiecePlacedOn(position);
         return isOpponentFrom(chessPiece);
     }
 

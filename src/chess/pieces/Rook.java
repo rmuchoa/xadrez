@@ -1,7 +1,6 @@
 package chess.pieces;
 
 import boardgame.Board;
-import boardgame.BoardPosition;
 import chess.ChessException;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -16,8 +15,8 @@ public class Rook extends ChessPiece {
     }
 
     @Override
-    public List<BoardPosition> getAllAvailableTargetPositions() {
-        List<BoardPosition> possibleMovements = new ArrayList<>();
+    public List<ChessPosition> getAllAvailableTargetPositions() {
+        List<ChessPosition> possibleMovements = new ArrayList<>();
 
         possibleMovements.addAll(getAllAvailableAbovePositions());
         possibleMovements.addAll(getAllAvailableBelowPositions());
@@ -27,108 +26,100 @@ public class Rook extends ChessPiece {
         return possibleMovements;
     }
 
-    private List<BoardPosition> getAllAvailableAbovePositions() {
-        ChessPosition current = ChessPosition.fromPosition(getPosition());
-        ChessPosition abovePosition = current.getNextAbovePosition();
+    private List<ChessPosition> getAllAvailableAbovePositions() {
+        List<ChessPosition> aboveMovements = new ArrayList<>();
 
-        List<BoardPosition> aboveMovements = new ArrayList<>();
-        while (true) {
-            if (isAllowedToTarget(abovePosition)) {
-                aboveMovements.add(abovePosition.toBoardPosition());
+        try {
+            appendNextAvailablePositionAbove(aboveMovements, getPosition());
 
-                if (thereIsAnOpponentPiecePlacedOn(abovePosition))
-                    break;
-
-            } else {
-                break;
-            }
-
-            try {
-                abovePosition = abovePosition.getNextAbovePosition();
-            } catch (ChessException ex) {
-                return aboveMovements;
-            }
-        }
+        } catch (ChessException ignored) {}
 
         return aboveMovements;
     }
 
-    private List<BoardPosition> getAllAvailableBelowPositions() {
-        ChessPosition current = ChessPosition.fromPosition(getPosition());
-        ChessPosition belowPosition = current.getNextBelowPosition();
+    private void appendNextAvailablePositionAbove(List<ChessPosition> aboveMovements, ChessPosition position) {
+        ChessPosition abovePosition = position.getNextAbovePosition();
 
-        List<BoardPosition> belowMovements = new ArrayList<>();
-        while (true) {
-            if (isAllowedToTarget(belowPosition)) {
-                belowMovements.add(belowPosition.toBoardPosition());
+        if (isAllowedToTarget(abovePosition)) {
+            aboveMovements.add(abovePosition);
 
-                if (thereIsAnOpponentPiecePlacedOn(belowPosition))
-                    break;
+            if (thereIsAnOpponentPlacedOn(abovePosition))
+                return;
 
-            } else {
-                break;
-            }
-
-            try {
-                belowPosition = belowPosition.getNextBelowPosition();
-            } catch (ChessException ex) {
-                return belowMovements;
-            }
+            appendNextAvailablePositionAbove(aboveMovements, abovePosition);
         }
+    }
+
+    private List<ChessPosition> getAllAvailableBelowPositions() {
+        List<ChessPosition> belowMovements = new ArrayList<>();
+
+        try {
+            appendNextAvailablePositionBelow(belowMovements, getPosition());
+
+        } catch (ChessException ignored) {}
 
         return belowMovements;
     }
 
-    private List<BoardPosition> getAllAvailableRightPositions() {
-        ChessPosition current = ChessPosition.fromPosition(getPosition());
-        ChessPosition rightPosition = current.getNextRightPosition();
+    private void appendNextAvailablePositionBelow(List<ChessPosition> belowMovements, ChessPosition position) {
+        ChessPosition belowPosition = position.getNextBelowPosition();
 
-        List<BoardPosition> rightMovements = new ArrayList<>();
-        while (true) {
-            if (isAllowedToTarget(rightPosition)) {
-                rightMovements.add(rightPosition.toBoardPosition());
+        if (isAllowedToTarget(belowPosition)) {
+            belowMovements.add(belowPosition);
 
-                if (thereIsAnOpponentPiecePlacedOn(rightPosition))
-                    break;
+            if (thereIsAnOpponentPlacedOn(belowPosition))
+                return;
 
-            } else {
-                break;
-            }
-
-            try {
-                rightPosition = rightPosition.getNextRightPosition();
-            } catch (ChessException ex) {
-                return rightMovements;
-            }
+            appendNextAvailablePositionBelow(belowMovements, belowPosition);
         }
+    }
+
+    private List<ChessPosition> getAllAvailableRightPositions() {
+        List<ChessPosition> rightMovements = new ArrayList<>();
+
+        try {
+            appendNextAvailablePositionRight(rightMovements, getPosition());
+
+        } catch (ChessException ignored) {}
 
         return rightMovements;
     }
 
-    private List<BoardPosition> getAllAvailableLeftPositions() {
-        ChessPosition current = ChessPosition.fromPosition(getPosition());
-        ChessPosition leftPosition = current.getNextLeftPosition();
+    private void appendNextAvailablePositionRight(List<ChessPosition> rightMovements, ChessPosition position) {
+        ChessPosition rightPosition = position.getNextRightPosition();
 
-        List<BoardPosition> leftMovements = new ArrayList<>();
-        while (true) {
-            if (isAllowedToTarget(leftPosition)) {
-                leftMovements.add(leftPosition.toBoardPosition());
+        if (isAllowedToTarget(rightPosition)) {
+            rightMovements.add(rightPosition);
 
-                if (thereIsAnOpponentPiecePlacedOn(leftPosition))
-                    break;
+            if (thereIsAnOpponentPlacedOn(rightPosition))
+                return;
 
-            } else {
-                break;
-            }
-
-            try {
-                leftPosition = leftPosition.getNextLeftPosition();
-            } catch (ChessException ex) {
-                return leftMovements;
-            }
+            appendNextAvailablePositionRight(rightMovements, rightPosition);
         }
+    }
+
+    private List<ChessPosition> getAllAvailableLeftPositions() {
+        List<ChessPosition> leftMovements = new ArrayList<>();
+
+        try {
+            appendNextAvailablePositionLeft(leftMovements, getPosition());
+
+        } catch (ChessException ignored) {}
 
         return leftMovements;
+    }
+
+    private void appendNextAvailablePositionLeft(List<ChessPosition> leftMovements, ChessPosition position) {
+        ChessPosition leftPosition = position.getNextLeftPosition();
+
+        if (isAllowedToTarget(leftPosition)) {
+            leftMovements.add(leftPosition);
+
+            if (thereIsAnOpponentPlacedOn(leftPosition))
+                return;
+
+            appendNextAvailablePositionLeft(leftMovements, leftPosition);
+        }
     }
 
     @Override

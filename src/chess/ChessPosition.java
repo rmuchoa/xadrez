@@ -1,169 +1,164 @@
 package chess;
 
-import static chess.ChessPosition.ChessPositionBuilder.builder;
+import static chess.ChessMatch.CHESS_BOARD_SIZE;
 
 import boardgame.BoardPosition;
-import boardgame.BoardPosition.BoardPositionBuilder;
 
-public class ChessPosition {
+public class ChessPosition extends BoardPosition {
 
-    private final char column;
-    private final int row;
+    private final char chessColumn;
+    private final int chessRow;
 
-    public ChessPosition(char column, int row) {
-        validateChessPositionCoordinate(column, row);
+    public ChessPosition(char chessColumn, int chessRow) {
+        super(toBoardMatrixRow(chessRow), toBoardMatrixColumn(chessColumn));
 
-        this.column = column;
-        this.row = row;
+        validateChessPositionCoordinate(chessColumn, chessRow);
+
+        this.chessColumn = chessColumn;
+        this.chessRow = chessRow;
     }
 
-    public char getColumn() {
-        return column;
+    public char getChessColumn() {
+        return chessColumn;
     }
 
-    public int getRow() {
-        return row;
+    public int getChessRow() {
+        return chessRow;
     }
 
     public ChessPosition getNextAbovePosition() {
         return builder()
-            .column(getSamePositionColumn())
-            .row(getNextAbovePositionRow())
+            .chessColumn(getSameChessColumn())
+            .chessRow(getNextAboveChessRow())
             .build();
     }
 
     public ChessPosition getNextBelowPosition() {
         return builder()
-            .column(getSamePositionColumn())
-            .row(getNextBelowPositionRow())
+            .chessColumn(getSameChessColumn())
+            .chessRow(getNextBelowChessRow())
             .build();
     }
 
     public ChessPosition getNextRightPosition() {
         return builder()
-            .column(getNextRightPositionColumn())
-            .row(getSamePositionRow())
+            .chessColumn(getNextRightChessColumn())
+            .chessRow(getSameChessRow())
             .build();
     }
 
     public ChessPosition getNextLeftPosition() {
         return builder()
-            .column(getNextLeftPositionColumn())
-            .row(getSamePositionRow())
+            .chessColumn(getNextLeftChessColumn())
+            .chessRow(getSameChessRow())
             .build();
     }
 
     public ChessPosition getNextDiagonalSuperiorRightPosition() {
         return builder()
-            .column(getNextRightPositionColumn())
-            .row(getNextAbovePositionRow())
+            .chessColumn(getNextRightChessColumn())
+            .chessRow(getNextAboveChessRow())
             .build();
     }
 
     public ChessPosition getNextDiagonalSuperiorLeftPosition() {
         return builder()
-            .column(getNextLeftPositionColumn())
-            .row(getNextAbovePositionRow())
+            .chessColumn(getNextLeftChessColumn())
+            .chessRow(getNextAboveChessRow())
             .build();
     }
 
     public ChessPosition getNextDiagonalInferiorRightPosition() {
         return builder()
-            .column(getNextRightPositionColumn())
-            .row(getNextBelowPositionRow())
+            .chessColumn(getNextRightChessColumn())
+            .chessRow(getNextBelowChessRow())
             .build();
     }
 
     public ChessPosition getNextDiagonalInferiorLeftPosition() {
         return builder()
-            .column(getNextLeftPositionColumn())
-            .row(getNextBelowPositionRow())
+            .chessColumn(getNextLeftChessColumn())
+            .chessRow(getNextBelowChessRow())
             .build();
     }
 
-    private char getSamePositionColumn() {
-        return column;
+    private char getSameChessColumn() {
+        return chessColumn;
     }
 
-    private char getNextRightPositionColumn() {
-        char right = column;
+    private char getNextRightChessColumn() {
+        char right = chessColumn;
         return ++right;
     }
 
-    private char getNextLeftPositionColumn() {
-        char right = column;
+    private char getNextLeftChessColumn() {
+        char right = chessColumn;
         return --right;
     }
 
-    private int getSamePositionRow() {
-        return row;
+    private int getSameChessRow() {
+        return chessRow;
     }
 
-    private int getNextAbovePositionRow() {
-        return row + 1;
+    private int getNextAboveChessRow() {
+        return chessRow + 1;
     }
 
-    private int getNextBelowPositionRow() {
-        return row - 1;
-    }
-
-    public BoardPosition toBoardPosition() {
-        return BoardPositionBuilder.builder()
-            .row(toBoardPositionRow())
-            .column(toBoardPositionColumn())
-            .build();
-    }
-
-    private int toBoardPositionRow() {
-        return 8 - row;
-    }
-
-    private int toBoardPositionColumn() {
-        return column - 'a';
+    private int getNextBelowChessRow() {
+        return chessRow - 1;
     }
 
     @Override
     public String toString() {
-        return "" + column + row;
+        return "" + chessColumn + chessRow;
     }
 
-    private static void validateChessPositionCoordinate(char column, int row) {
-        if (isNotAValidChessPositionCoordinate(column, row))
-            throw new ChessException("Error instantiating ChessPosition "+column+row+". Valid values are from a1 to h8. ");
+    @Override
+    public boolean equals(Object any) {
+        return any instanceof ChessPosition
+            && equals((ChessPosition) any);
     }
 
-    private static boolean isNotAValidChessPositionCoordinate(char column, int row) {
-        return isNotAChessBoardColumnLetter(column) ||
-            isNotAChessBoardRowNumber(row);
+    private boolean equals(ChessPosition position) {
+        return super.equals(position)
+            && chessColumn == position.getChessColumn()
+            && chessRow == position.getChessRow();
     }
 
-    private static boolean isNotAChessBoardColumnLetter(char column) {
-        return column < 'a' || column > 'h';
+    private static int toBoardMatrixRow(int chessRow) {
+        return CHESS_BOARD_SIZE - chessRow;
     }
 
-    private static boolean isNotAChessBoardRowNumber(int row) {
-        return row < 1 || row > 8;
+    private static int toBoardMatrixColumn(char chessColumn) {
+        return chessColumn - 'a';
     }
 
-    public static ChessPosition fromPosition(BoardPosition boardPosition) {
-        return builder()
-            .column(toChessPositionColumn(boardPosition))
-            .row(toChessPositionRow(boardPosition))
-            .build();
+    private static void validateChessPositionCoordinate(char chessColumn, int chessRow) {
+        if (isNotAValidChessPositionCoordinate(chessColumn, chessRow))
+            throw new ChessException("Error instantiating ChessPosition "+chessColumn+chessRow+". Valid values are from a1 to h8.");
     }
 
-    private static char toChessPositionColumn(BoardPosition boardPosition) {
-        return (char) ('a' + boardPosition.getColumn());
+    private static boolean isNotAValidChessPositionCoordinate(char chessColumn, int chessRow) {
+        return isNotAChessColumnLetter(chessColumn) ||
+            isNotAChessRowNumber(chessRow);
     }
 
-    private static int toChessPositionRow(BoardPosition boardPosition) {
-        return 8 - boardPosition.getRow();
+    private static boolean isNotAChessColumnLetter(char chessColumn) {
+        return chessColumn < 'a' || chessColumn > 'h';
+    }
+
+    private static boolean isNotAChessRowNumber(int chessRow) {
+        return chessRow < 1 || chessRow > CHESS_BOARD_SIZE;
+    }
+
+    public static ChessPositionBuilder builder() {
+        return ChessPositionBuilder.builder();
     }
 
     public static class ChessPositionBuilder {
 
-        private char column;
-        private int row;
+        private char chessColumn;
+        private int chessRow;
 
         private ChessPositionBuilder() {}
 
@@ -171,18 +166,18 @@ public class ChessPosition {
             return new ChessPositionBuilder();
         }
 
-        public ChessPositionBuilder column(char column) {
-            this.column = column;
+        public ChessPositionBuilder chessColumn(char chessColumn) {
+            this.chessColumn = chessColumn;
             return this;
         }
 
-        public ChessPositionBuilder row(int row) {
-            this.row = row;
+        public ChessPositionBuilder chessRow(int chessRow) {
+            this.chessRow = chessRow;
             return this;
         }
 
         public ChessPosition build() {
-            return new ChessPosition(column, row);
+            return new ChessPosition(chessColumn, chessRow);
         }
 
     }

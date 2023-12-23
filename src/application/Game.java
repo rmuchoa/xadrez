@@ -31,6 +31,7 @@ public class Game {
             } catch (GameException ex) {
                 System.out.println(ex.getMessage());
                 scanner.nextLine();
+                throw ex;
             } catch (InputMismatchException ex) {
                 System.out.println(ex.getMessage());
                 scanner.nextLine();
