@@ -1,6 +1,8 @@
 package boardgame;
 
-public class BoardPiece {
+import java.util.List;
+
+public abstract class BoardPiece {
 
     private final Board board;
     private BoardPosition position;
@@ -24,4 +26,30 @@ public class BoardPiece {
     public void takeOutOfPosition() {
         position = null;
     }
+
+    public abstract List<BoardPosition> getAllAvailableTargetPositions();
+
+    public boolean isNotAnAvailableTarget(BoardPosition target) {
+        return !isAnAvailableTarget(target);
+    }
+
+    public boolean isAnAvailableTarget(BoardPosition target) {
+        return getAllAvailableTargetPositions().stream()
+            .anyMatch(target::equals);
+    }
+
+    public boolean thereIsNoneAvailableTargetPosition() {
+        return getAllAvailableTargetPositions().stream()
+            .findAny()
+            .isEmpty();
+    }
+
+    protected BoardPiece getBoardPiecePlacedOn(BoardPosition position) {
+        return board.getPiecePlacedOn(position);
+    }
+
+    protected boolean doesNotExistsOnBoard(BoardPosition position) {
+        return board.doesNotExists(position);
+    }
+
 }

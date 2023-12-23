@@ -22,11 +22,11 @@ public class Board {
         return totalColumns;
     }
 
-    public BoardPiece getBoardPiecePlacedOn(BoardPosition position) {
-        return getBoardPiecePlacedOn(position.getRow(), position.getColumn());
+    public BoardPiece getPiecePlacedOn(BoardPosition position) {
+        return getPiecePlacedOn(position.getRow(), position.getColumn());
     }
 
-    public BoardPiece getBoardPiecePlacedOn(int row, int column) {
+    public BoardPiece getPiecePlacedOn(int row, int column) {
         validatePositionExistence(row, column);
 
         return boardPieces[row][column];
@@ -45,21 +45,25 @@ public class Board {
         if (isBoardPositionEmpty(position))
             return null;
 
-        BoardPiece boardPiece = getBoardPiecePlacedOn(position);
+        BoardPiece boardPiece = getPiecePlacedOn(position);
         boardPieces[position.getRow()][position.getColumn()] = null;
         boardPiece.takeOutOfPosition();
         return boardPiece;
     }
 
-    public boolean positionExists(BoardPosition position) {
-        return positionExists(position.getRow(), position.getColumn());
+    public boolean doesExists(BoardPosition position) {
+        return doesExistsPosition(position.getRow(), position.getColumn());
     }
 
-    private boolean positionDoesNotExists(int row, int column) {
-        return !positionExists(row, column);
+    public boolean doesNotExists(BoardPosition position) {
+        return doesNotExistsPosition(position.getRow(), position.getColumn());
     }
 
-    private boolean positionExists(int row, int column) {
+    private boolean doesNotExistsPosition(int row, int column) {
+        return !doesExistsPosition(row, column);
+    }
+
+    private boolean doesExistsPosition(int row, int column) {
         return rowExists(row) &&
             columnExists(column);
     }
@@ -102,11 +106,11 @@ public class Board {
     public boolean isBoardPositionEmpty(BoardPosition boardPosition) {
         validatePositionExistence(boardPosition.getRow(), boardPosition.getColumn());
 
-        return getBoardPiecePlacedOn(boardPosition) == null;
+        return getPiecePlacedOn(boardPosition) == null;
     }
 
     private void validatePositionExistence(int row, int column) {
-        if (positionDoesNotExists(row, column))
+        if (doesNotExistsPosition(row, column))
             throw new BoardException("Position not on the board. row["+row+"], column["+column+"]");
     }
 

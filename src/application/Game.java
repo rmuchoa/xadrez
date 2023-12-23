@@ -34,6 +34,7 @@ public class Game {
             } catch (InputMismatchException ex) {
                 System.out.println(ex.getMessage());
                 scanner.nextLine();
+                throw ex;
             }
         }
 

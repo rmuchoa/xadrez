@@ -22,7 +22,7 @@ public class ChessMatch {
 
         for (int row=0; row < board.getTotalRows(); row++) {
             for (int column=0; column < board.getTotalColumns(); column++) {
-                chessPieces[row][column] = (ChessPiece) board.getBoardPiecePlacedOn(row, column);
+                chessPieces[row][column] = (ChessPiece) board.getPiecePlacedOn(row, column);
             }
         }
 
@@ -31,6 +31,7 @@ public class ChessMatch {
 
     public ChessPiece performChessMove(ChessPosition source, ChessPosition target) {
         validateSourcePositionExistence(source);
+        validateTargetPositionAvailability(source, target);
 
         BoardPiece capturedPiece = makeMove(source.toBoardPosition(), target.toBoardPosition());
         return (ChessPiece) capturedPiece;
@@ -67,9 +68,25 @@ public class ChessMatch {
     }
 
     private void validateSourcePositionExistence(ChessPosition source) {
-        if (board.isBoardPositionEmpty(source.toBoardPosition())) {
-            throw new ChessException("There is no piece on source position "+source.getColumn()+source.getRow());
-        }
+        BoardPosition sourcePosition = source.toBoardPosition();
+
+        if (board.isBoardPositionEmpty(sourcePosition))
+            throw new ChessException("There is no piece on source position " + source);
+
+        BoardPiece piece = board.getPiecePlacedOn(sourcePosition);
+
+        if (piece.thereIsNoneAvailableTargetPosition())
+            throw new ChessException("There is no possible movements for the chosen " + piece + " piece");
+
+    }
+
+    private void validateTargetPositionAvailability(ChessPosition source, ChessPosition target) {
+        BoardPosition sourcePosition = source.toBoardPosition();
+        BoardPiece piece = board.getPiecePlacedOn(sourcePosition);
+
+        if (piece.isNotAnAvailableTarget(target.toBoardPosition()))
+            throw new ChessException("The chosen piece cannot move to target position " + target);
+
     }
 
 }
