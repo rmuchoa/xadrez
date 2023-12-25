@@ -1,17 +1,17 @@
 package chess.pieces;
 
-import boardgame.Board;
+import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
 import java.util.Collections;
 import java.util.List;
 
-public class NoPlaced extends ChessPiece {
+public class Empty extends ChessPiece {
 
     private static final Color NO_COLOR = null;
 
-    public NoPlaced(Board board) {
+    public Empty(ChessBoard board) {
         super(board, NO_COLOR);
     }
 
@@ -24,27 +24,27 @@ public class NoPlaced extends ChessPiece {
         return "-";
     }
 
-    public static NoPlacedBuilder builder() {
-        return NoPlacedBuilder.builder();
+    public static EmptyBuilder builder() {
+        return EmptyBuilder.builder();
     }
 
-    public static class NoPlacedBuilder {
+    public static class EmptyBuilder {
 
-        private Board board;
+        private ChessBoard board;
 
-        private NoPlacedBuilder() {}
+        private EmptyBuilder() {}
 
-        public static NoPlacedBuilder builder() {
-            return new NoPlacedBuilder();
+        public static EmptyBuilder builder() {
+            return new EmptyBuilder();
         }
 
-        public NoPlacedBuilder board(Board board) {
+        public EmptyBuilder board(ChessBoard board) {
             this.board = board;
             return this;
         }
 
-        public NoPlaced build() {
-            return new NoPlaced(board);
+        public Empty build() {
+            return new Empty(board);
         }
 
     }

@@ -26,10 +26,10 @@ public class BoardPosition {
     @Override
     public boolean equals(Object any) {
         return any instanceof BoardPosition
-            && equals((BoardPosition) any);
+            && equalsPosition((BoardPosition) any);
     }
 
-    private boolean equals(BoardPosition position) {
+    private boolean equalsPosition(BoardPosition position) {
         return position != null
             && matrixRow == position.getMatrixRow()
             && matrixColumn == position.getMatrixColumn();

@@ -2,16 +2,16 @@ package boardgame;
 
 import java.util.List;
 
-public abstract class BoardPiece <T extends BoardPosition> {
+public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
-    private final Board board;
+    private final B board;
     private T position;
 
-    public BoardPiece(Board board) {
+    protected BoardPiece(B board) {
         this.board = board;
     }
 
-    protected Board getBoard() {
+    protected B getBoard() {
         return board;
     }
 
@@ -27,6 +27,14 @@ public abstract class BoardPiece <T extends BoardPosition> {
         position = null;
     }
 
+    protected P getBoardPiecePlacedOn(T position) {
+        return board.getPiecePlacedOn(position);
+    }
+
+    protected boolean doesNotExistsOnBoard(T position) {
+        return board.doesNotExists(position);
+    }
+
     public abstract List<T> getAllAvailableTargetPositions();
 
     public boolean canNotTargetThis(T position) {
@@ -39,17 +47,7 @@ public abstract class BoardPiece <T extends BoardPosition> {
     }
 
     public boolean hasNoAvailableMovements() {
-        return getAllAvailableTargetPositions().stream()
-            .findAny()
-            .isEmpty();
-    }
-
-    protected BoardPiece getBoardPiecePlacedOn(T position) {
-        return board.getPiecePlacedOn(position);
-    }
-
-    protected boolean doesNotExistsOnBoard(T position) {
-        return board.doesNotExists(position);
+        return getAllAvailableTargetPositions().isEmpty();
     }
 
 }

@@ -1,6 +1,6 @@
 package chess.pieces;
 
-import boardgame.Board;
+import chess.ChessBoard;
 import chess.ChessException;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class King extends ChessPiece {
 
-    public King(Board board, Color color) {
+    private King(ChessBoard board, Color color) {
         super(board, color);
     }
 
@@ -132,4 +132,36 @@ public class King extends ChessPiece {
     public String toString() {
         return "K";
     }
+
+    public static KingBuilder builder() {
+        return KingBuilder.builder();
+    }
+
+    public static class KingBuilder {
+
+        private ChessBoard board;
+        private Color color;
+
+        private KingBuilder() {}
+
+        public static KingBuilder builder() {
+            return new KingBuilder();
+        }
+
+        public KingBuilder board(ChessBoard board) {
+            this.board = board;
+            return this;
+        }
+
+        public KingBuilder color(Color color) {
+            this.color = color;
+            return this;
+        }
+
+        public King build() {
+            return new King(board, color);
+        }
+
+    }
+
 }

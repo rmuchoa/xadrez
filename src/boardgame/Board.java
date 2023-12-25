@@ -1,17 +1,22 @@
 package boardgame;
 
-public class Board {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
     private final int totalRows;
     private final int totalColumns;
-    private final BoardPiece[][] boardPieces;
+    private final List<List<P>> boardPieces;
 
-    public Board(int totalRows, int totalColumns) {
+    protected Board(int totalRows, int totalColumns) {
         validateBoardSizing(totalRows, totalColumns);
 
         this.totalRows = totalRows;
         this.totalColumns = totalColumns;
-        this.boardPieces = new BoardPiece[totalRows][totalColumns];
+        this.boardPieces = buildBidimensionalList(totalRows, totalColumns);
     }
 
     public int getTotalRows() {
@@ -22,40 +27,56 @@ public class Board {
         return totalColumns;
     }
 
-    public BoardPiece getPiecePlacedOn(BoardPosition position) {
+    public List<List<P>> getAllPieces() {
+        return boardPieces;
+    }
+
+    protected List<P> getAllPlacedPieces() {
+        return boardPieces.stream()
+            .reduce(new ArrayList<>(), (accumulator, nullable) -> {
+                List<P> nonNullable = new ArrayList<>(nullable);
+                nonNullable.removeAll(Collections.singleton(null));
+                accumulator.addAll(nonNullable);
+                return accumulator;
+            });
+    }
+
+    public P getPiecePlacedOn(T position) {
         return getPiecePlacedOn(position.getMatrixRow(), position.getMatrixColumn());
     }
 
-    public BoardPiece getPiecePlacedOn(int row, int column) {
+    public P getPiecePlacedOn(int row, int column) {
         validatePositionExistence(row, column);
 
-        return boardPieces[row][column];
+        return boardPieces.get(row).get(column);
     }
 
-    public void placePieceOn(BoardPosition position, BoardPiece boardPiece) {
+    public void placePieceOn(T position, P piece) {
         validatePositionAvailability(position);
 
-        boardPieces[position.getMatrixRow()][position.getMatrixColumn()] = boardPiece;
-        boardPiece.placeOnPosition(position);
+        boardPieces.get(position.getMatrixRow())
+            .set(position.getMatrixColumn(), piece);
+        piece.placeOnPosition(position);
     }
 
-    public BoardPiece removePieceFrom(BoardPosition position) {
+    public P removePieceFrom(T position) {
         validatePositionExistence(position.getMatrixRow(), position.getMatrixColumn());
 
         if (isBoardPositionEmpty(position))
             return null;
 
-        BoardPiece boardPiece = getPiecePlacedOn(position);
-        boardPieces[position.getMatrixRow()][position.getMatrixColumn()] = null;
-        boardPiece.takeOutOfPosition();
-        return boardPiece;
+        P piece = getPiecePlacedOn(position);
+        boardPieces.get(position.getMatrixRow())
+            .set(position.getMatrixColumn(), null);
+        piece.takeOutOfPosition();
+        return piece;
     }
 
-    public boolean doesExists(BoardPosition position) {
+    public boolean doesExists(T position) {
         return doesExistsPosition(position.getMatrixRow(), position.getMatrixColumn());
     }
 
-    public boolean doesNotExists(BoardPosition position) {
+    public boolean doesNotExists(T position) {
         return doesNotExistsPosition(position.getMatrixRow(), position.getMatrixColumn());
     }
 
@@ -94,17 +115,17 @@ public class Board {
         return row < totalRows;
     }
 
-    public boolean isBoardPositionOccupied(BoardPosition position) {
+    public boolean isBoardPositionOccupied(T position) {
         return !isBoardPositionEmpty(position);
     }
 
-    public boolean isBoardPositionEmpty(BoardPosition boardPosition) {
-        validatePositionExistence(boardPosition.getMatrixRow(), boardPosition.getMatrixColumn());
+    public boolean isBoardPositionEmpty(T position) {
+        validatePositionExistence(position.getMatrixRow(), position.getMatrixColumn());
 
-        return getPiecePlacedOn(boardPosition) == null;
+        return getPiecePlacedOn(position) == null;
     }
 
-    private void validatePositionAvailability(BoardPosition position) {
+    private void validatePositionAvailability(T position) {
         if (isBoardPositionOccupied(position))
             throw new BoardException("There is already a piece on position " + position);
     }
@@ -117,6 +138,20 @@ public class Board {
     private static void validateBoardSizing(int rows, int columns) {
         if (rows < 1 || columns < 1)
             throw new BoardException("Error creating board with "+rows+" rows and "+columns+": there must be at least 1 row and 1 column.");
+    }
+
+    private List<List<P>> buildBidimensionalList(int totalRows, int totalColumns) {
+        List<List<P>> bidimensionalList = new ArrayList<>(totalRows);
+
+        for (int i=0; i<totalRows; i++) {
+            List<P> line = new ArrayList<>(totalColumns);
+            bidimensionalList.add(line);
+
+            for (int j=0; j<totalColumns; j++)
+                line.add(null);
+        }
+
+        return bidimensionalList;
     }
 
 }

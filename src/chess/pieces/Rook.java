@@ -1,6 +1,6 @@
 package chess.pieces;
 
-import boardgame.Board;
+import chess.ChessBoard;
 import chess.ChessException;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Rook extends ChessPiece {
 
-    public Rook(Board board, Color color) {
+    private Rook(ChessBoard board, Color color) {
         super(board, color);
     }
 
@@ -125,6 +125,37 @@ public class Rook extends ChessPiece {
     @Override
     public String toString() {
         return "R";
+    }
+    
+    public static RookBuilder builder() {
+        return RookBuilder.builder();
+    }
+    
+    public static class RookBuilder {
+
+        private ChessBoard board;
+        private Color color;
+
+        private RookBuilder() {}
+
+        public RookBuilder board(ChessBoard board) {
+            this.board = board;
+            return this;
+        }
+
+        public RookBuilder color(Color color) {
+            this.color = color;
+            return this;
+        }
+        
+        public static RookBuilder builder() {
+            return new RookBuilder();
+        }
+        
+        public Rook build() {
+            return new Rook(board, color);
+        }
+        
     }
 
 }

@@ -1,19 +1,37 @@
 package chess;
 
-import boardgame.Board;
 import boardgame.BoardPiece;
+import chess.pieces.King;
+import java.util.List;
 
-public abstract class ChessPiece extends BoardPiece<ChessPosition> {
+public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;
+    private boolean inCheck;
 
-    public ChessPiece(Board board, Color color) {
+    protected ChessPiece(ChessBoard board, Color color) {
         super(board);
         this.color = color;
     }
 
     public Color getColor() {
         return color;
+    }
+
+    protected Color getOpponent() {
+        return Color.WHITE.equals(color) ? Color.BLACK : Color.WHITE;
+    }
+
+    public boolean isWhitePiece() {
+        return Color.WHITE.equals(color);
+    }
+
+    public boolean isBlackPiece() {
+        return Color.BLACK.equals(color);
+    }
+
+    public boolean inInCheck() {
+        return inCheck;
     }
 
     protected boolean isAllowedToTarget(ChessPosition position) {
@@ -31,20 +49,28 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition> {
     }
 
     protected boolean thereIsAnOpponentPlacedOn(ChessPosition position) {
-        ChessPiece chessPiece = (ChessPiece) getBoardPiecePlacedOn(position);
+        ChessPiece chessPiece = getBoardPiecePlacedOn(position);
         return isOpponentFrom(chessPiece);
     }
 
-    private boolean isOpponentFrom(ChessPiece chessPiece) {
+    protected boolean isOpponentFrom(ChessPiece chessPiece) {
         return chessPiece != null && hasDifferentColorOf(chessPiece.getColor());
     }
 
-    private boolean hasDifferentColorOf(Color otherColor) {
+    protected boolean hasDifferentColorOf(Color otherColor) {
         return !hasSameColorOf(otherColor);
     }
 
-    private boolean hasSameColorOf(Color otherColor) {
+    protected boolean hasSameColorOf(Color otherColor) {
         return color != null && color.equals(otherColor);
+    }
+
+    public void informCheck() {
+        inCheck = true;
+    }
+
+    public void revokeCheck() {
+        inCheck = false;
     }
 
 }
