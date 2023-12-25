@@ -8,14 +8,20 @@ public class ChessPosition extends BoardPosition {
 
     private final char chessColumn;
     private final int chessRow;
+    private final MovementType movement;
 
     public ChessPosition(char chessColumn, int chessRow) {
+        this(chessColumn, chessRow, null);
+    }
+    
+    public ChessPosition(char chessColumn, int chessRow, MovementType movement) {
         super(toBoardMatrixRow(chessRow), toBoardMatrixColumn(chessColumn));
 
         validateChessPositionCoordinate(chessColumn, chessRow);
 
         this.chessColumn = chessColumn;
         this.chessRow = chessRow;
+        this.movement = movement;
     }
 
     public char getChessColumn() {
@@ -26,10 +32,15 @@ public class ChessPosition extends BoardPosition {
         return chessRow;
     }
 
+    public MovementType getMovement() {
+        return movement;
+    }
+
     public ChessPosition getNextAbovePosition() {
         return builder()
             .chessColumn(getSameChessColumn())
             .chessRow(getNextAboveChessRow())
+            .lineMovement()
             .build();
     }
 
@@ -37,6 +48,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getSameChessColumn())
             .chessRow(getNextBelowChessRow())
+            .lineMovement()
             .build();
     }
 
@@ -44,6 +56,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextRightChessColumn())
             .chessRow(getSameChessRow())
+            .lineMovement()
             .build();
     }
 
@@ -51,6 +64,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextLeftChessColumn())
             .chessRow(getSameChessRow())
+            .lineMovement()
             .build();
     }
 
@@ -58,6 +72,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextRightChessColumn())
             .chessRow(getNextAboveChessRow())
+            .diagonalMovement()
             .build();
     }
 
@@ -65,6 +80,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextLeftChessColumn())
             .chessRow(getNextAboveChessRow())
+            .diagonalMovement()
             .build();
     }
 
@@ -72,6 +88,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextRightChessColumn())
             .chessRow(getNextBelowChessRow())
+            .diagonalMovement()
             .build();
     }
 
@@ -79,6 +96,7 @@ public class ChessPosition extends BoardPosition {
         return builder()
             .chessColumn(getNextLeftChessColumn())
             .chessRow(getNextBelowChessRow())
+            .diagonalMovement()
             .build();
     }
 
@@ -155,10 +173,19 @@ public class ChessPosition extends BoardPosition {
         return ChessPositionBuilder.builder();
     }
 
+    public enum MovementType {
+
+        LINE,
+        DIAGONAL,
+        EL
+
+    }
+
     public static class ChessPositionBuilder {
 
         private char chessColumn;
         private int chessRow;
+        private MovementType movement;
 
         private ChessPositionBuilder() {}
 
@@ -176,6 +203,23 @@ public class ChessPosition extends BoardPosition {
             return this;
         }
 
+        public ChessPositionBuilder movement(MovementType movement) {
+            this.movement = movement;
+            return this;
+        }
+
+        public ChessPositionBuilder lineMovement() {
+            return movement(MovementType.LINE);
+        }
+
+        public ChessPositionBuilder diagonalMovement() {
+            return movement(MovementType.DIAGONAL);
+        }
+
+        public ChessPositionBuilder elMovement() {
+            return movement(MovementType.EL);
+        }
+
         public ChessPositionBuilder boardPostion(int row, int column) {
             this.chessColumn = (char) ('a' + column);
             this.chessRow = CHESS_BOARD_SIZE - row;
@@ -183,7 +227,7 @@ public class ChessPosition extends BoardPosition {
         }
 
         public ChessPosition build() {
-            return new ChessPosition(chessColumn, chessRow);
+            return new ChessPosition(chessColumn, chessRow, movement);
         }
 
     }

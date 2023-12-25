@@ -16,10 +16,10 @@ public class Game {
         ChessMatch chessMatch = new ChessMatch();
         List<ChessPiece> capturedPieces = new ArrayList<>();
 
-        while (true) {
+        while (chessMatch.isNotInCheckMate()) {
             try {
                 UI.clearScreen();
-                UI.printMatch(chessMatch, capturedPieces, null);
+                UI.printMatch(chessMatch, capturedPieces);
                 System.out.println();
                 System.out.print("Source: ");
                 ChessPosition sourcePosition = UI.readChessPosition(scanner);
@@ -40,13 +40,14 @@ public class Game {
             } catch (GameException ex) {
                 System.out.println(ex.getMessage());
                 scanner.nextLine();
-                //throw ex;
             } catch (InputMismatchException ex) {
                 System.out.println(ex.getMessage());
                 scanner.nextLine();
-                //throw ex;
             }
         }
+
+        UI.clearScreen();
+        UI.printMatch(chessMatch, capturedPieces);
 
     }
 }

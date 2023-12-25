@@ -21,16 +21,18 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
         return ChessBoardBuilder.builder();
     }
 
-    public ChessPiece getOpponentKingFrom(Color currentPlayer) {
+    public King getOpponentKingFrom(Color currentPlayer) {
         Color oponentColor = Color.WHITE.equals(currentPlayer) ? Color.BLACK : Color.WHITE;
         return getKingOf(oponentColor);
     }
 
-    public ChessPiece getKingOf(Color color) {
+    public King getKingOf(Color color) {
         return getAllPlacedPiecesOf(color)
             .stream()
-            .reduce(Empty.builder().build(),
-                (empty, piece) -> piece instanceof King ? piece : empty);
+            .filter(ChessPiece::isKing)
+            .map(piece -> (King) piece)
+            .findAny()
+            .orElse(null);
     }
 
     public static class ChessBoardBuilder {

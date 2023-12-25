@@ -2,12 +2,13 @@ package chess;
 
 import boardgame.BoardPiece;
 import chess.pieces.King;
-import java.util.List;
 
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;
     private boolean inCheck;
+    private boolean inCheckMate;
+    private int moveCount;
 
     protected ChessPiece(ChessBoard board, Color color) {
         super(board);
@@ -30,8 +31,16 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return Color.BLACK.equals(color);
     }
 
-    public boolean inInCheck() {
-        return inCheck;
+    public boolean isInCheck() {
+        return inCheck && !inCheckMate;
+    }
+
+    public boolean isInCheckMate() {
+        return inCheckMate;
+    }
+
+    public boolean isKing() {
+        return this instanceof King;
     }
 
     protected boolean isAllowedToTarget(ChessPosition position) {
@@ -72,5 +81,20 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
     public void revokeCheck() {
         inCheck = false;
     }
+    
+    public void informCheckMate() {
+        inCheckMate = true;
+    }
 
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public void increaseMoveCount() {
+        moveCount++;
+    }
+
+    public void decreaseMoveCount() {
+        moveCount--;
+    }
 }
