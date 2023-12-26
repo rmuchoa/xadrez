@@ -1,6 +1,6 @@
-package chess;
+package game.chess;
 
-import chess.pieces.King;
+import game.chess.pieces.King;
 import java.util.List;
 
 public class ChessMatch {

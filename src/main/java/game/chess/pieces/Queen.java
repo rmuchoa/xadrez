@@ -1,13 +1,12 @@
-package chess.pieces;
+package game.chess.pieces;
 
-import chess.ChessBoard;
-import chess.ChessException;
-import chess.ChessMatch;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import chess.Color;
+import game.chess.ChessBoard;
+import game.chess.ChessException;
+import game.chess.ChessMatch;
+import game.chess.ChessPiece;
+import game.chess.ChessPosition;
+import game.chess.Color;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Queen extends ChessPiece {

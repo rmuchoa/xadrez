@@ -1,4 +1,4 @@
-package boardgame;
+package game.boardgame;
 
 import java.util.List;
 

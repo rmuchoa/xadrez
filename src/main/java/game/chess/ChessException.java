@@ -1,6 +1,6 @@
-package chess;
+package game.chess;
 
-import application.GameException;
+import game.application.GameException;
 
 public class ChessException extends GameException {
     public ChessException(String message) {

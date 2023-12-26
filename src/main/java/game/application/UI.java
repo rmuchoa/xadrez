@@ -1,12 +1,12 @@
-package application;
+package game.application;
 
-import static chess.ChessBoard.CHESS_BOARD_SIZE;
+import static game.chess.ChessBoard.CHESS_BOARD_SIZE;
 
-import chess.ChessMatch;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import chess.Color;
-import chess.pieces.Empty;
+import game.chess.ChessMatch;
+import game.chess.ChessPiece;
+import game.chess.ChessPosition;
+import game.chess.Color;
+import game.chess.pieces.Empty;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
