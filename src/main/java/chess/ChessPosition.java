@@ -1,8 +1,8 @@
-package game.chess;
+package chess;
 
-import static game.chess.ChessBoard.CHESS_BOARD_SIZE;
+import static chess.ChessBoard.CHESS_BOARD_SIZE;
 
-import game.boardgame.BoardPosition;
+import board.BoardPosition;
 
 public class ChessPosition extends BoardPosition {
 

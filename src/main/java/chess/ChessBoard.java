@@ -1,7 +1,7 @@
-package game.chess;
+package chess;
 
-import game.boardgame.Board;
-import game.chess.pieces.King;
+import board.Board;
+import chess.pieces.King;
 import java.util.List;
 
 public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {

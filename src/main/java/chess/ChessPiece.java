@@ -1,7 +1,7 @@
-package game.chess;
+package chess;
 
-import game.boardgame.BoardPiece;
-import game.chess.pieces.King;
+import board.BoardPiece;
+import chess.pieces.King;
 
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 

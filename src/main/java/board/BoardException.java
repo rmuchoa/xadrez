@@ -1,6 +1,6 @@
-package game.boardgame;
+package board;
 
-import game.application.GameException;
+import game.GameException;
 
 public class BoardException extends GameException {
     public BoardException(String message) {

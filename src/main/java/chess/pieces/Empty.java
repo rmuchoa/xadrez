@@ -1,10 +1,10 @@
-package game.chess.pieces;
+package chess.pieces;
 
-import game.chess.ChessBoard;
-import game.chess.ChessMatch;
-import game.chess.ChessPiece;
-import game.chess.ChessPosition;
-import game.chess.Color;
+import chess.ChessBoard;
+import chess.ChessMatch;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import chess.Color;
 import java.util.Collections;
 import java.util.List;
 
