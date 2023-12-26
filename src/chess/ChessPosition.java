@@ -164,6 +164,62 @@ public class ChessPosition extends BoardPosition {
             .build();
     }
 
+    public ChessPosition getNextBesideEastCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getNextEastChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getNextBesideWestCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getNextWestChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getTwoBesideEastCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getTwoBesideEastChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getTwoBesideWestCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getTwoBesideWestChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getThreeBesideEastCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getThreeBesideEastChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getThreeBesideWestCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getThreeBesideWestChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
+    public ChessPosition getFourBesideWestCastlingMovementPosition() {
+        return builder()
+            .chessColumn(getFourBesideWestChessColumn())
+            .chessRow(getSameChessRow())
+            .castlingMovement()
+            .build();
+    }
+
     private char getSameChessColumn() {
         return chessColumn;
     }
@@ -188,6 +244,27 @@ public class ChessPosition extends BoardPosition {
     private char getTwoBesideWestChessColumn() {
         char column = chessColumn;
         column -= 2;
+
+        return column;
+    }
+
+    private char getThreeBesideEastChessColumn() {
+        char column = chessColumn;
+        column += 3;
+
+        return column;
+    }
+
+    private char getThreeBesideWestChessColumn() {
+        char column = chessColumn;
+        column -= 3;
+
+        return column;
+    }
+
+    private char getFourBesideWestChessColumn() {
+        char column = chessColumn;
+        column -= 4;
 
         return column;
     }
@@ -263,6 +340,7 @@ public class ChessPosition extends BoardPosition {
 
         LINE,
         DIAGONAL,
+        CASTLING,
         EL
 
     }
@@ -304,6 +382,10 @@ public class ChessPosition extends BoardPosition {
 
         public ChessPositionBuilder elMovement() {
             return movement(MovementType.EL);
+        }
+
+        public ChessPositionBuilder castlingMovement() {
+            return movement(MovementType.CASTLING);
         }
 
         public ChessPositionBuilder boardPostion(int row, int column) {

@@ -21,6 +21,7 @@ public class King extends ChessPiece {
 
         possibleMovements.addAll(getAllAvailableStraightPositions());
         possibleMovements.addAll(getAllAvailableDiagonalPositions());
+        possibleMovements.addAll(getAllAvailableCastlingPositions());
 
         return possibleMovements;
     }
@@ -45,6 +46,15 @@ public class King extends ChessPiece {
         ifAllowedAddSouthWestPositionOn(diagonalMovements);
 
         return diagonalMovements;
+    }
+
+    private List<ChessPosition> getAllAvailableCastlingPositions() {
+        List<ChessPosition> castlingMovements = new ArrayList<>();
+
+        ifAllowedAddQueensideCastlingPositionOn(castlingMovements);
+        ifAllowedAddKingsideCastlingPositionOn(castlingMovements);
+
+        return castlingMovements;
     }
 
     private void ifAllowedAddNorthPositionOn(List<ChessPosition> possibleMovements) {
@@ -125,6 +135,43 @@ public class King extends ChessPiece {
                 possibleMovements.add(southWestPosition);
 
         } catch (ChessException ignored) {}
+    }
+
+    private void ifAllowedAddQueensideCastlingPositionOn(List<ChessPosition> possibleMovements) {
+        try {
+            ChessPosition westCastlingMovementPosition = getPosition().getTwoBesideWestCastlingMovementPosition();
+
+            if (isAllowedToCastling(westCastlingMovementPosition, false))
+                possibleMovements.add(westCastlingMovementPosition);
+
+        } catch (ChessException ignored) {}
+    }
+
+    private void ifAllowedAddKingsideCastlingPositionOn(List<ChessPosition> possibleMovements) {
+        try {
+            ChessPosition eastCastlingMovementPosition = getPosition().getTwoBesideEastCastlingMovementPosition();
+
+            if (isAllowedToCastling(eastCastlingMovementPosition, true))
+                possibleMovements.add(eastCastlingMovementPosition);
+
+        } catch (ChessException ignored) {}
+    }
+
+    private boolean isAllowedToCastling(ChessPosition castlingTargetPosition, boolean kingside) {
+        if (hasNotMovedYet() &&
+            doesExistsOnBoard(castlingTargetPosition) &&
+            thereIsNoPiecePlacedOn(castlingTargetPosition)) {
+
+            if (kingside) {
+                Rook rightRook = (Rook) getBoard().getPiecePlacedOn(getPosition().getThreeBesideEastCastlingMovementPosition());
+                return rightRook != null && rightRook.isAllowedToCastling(kingside);
+            } else {
+                Rook leftRook = (Rook) getBoard().getPiecePlacedOn(getPosition().getFourBesideWestCastlingMovementPosition());
+                return leftRook != null && leftRook.isAllowedToCastling(kingside);
+            }
+        }
+
+        return false;
     }
 
     @Override

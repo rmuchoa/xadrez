@@ -85,12 +85,13 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
             .stream()
             .anyMatch(targetPosition -> {
                 boolean canSaveKing = false;
-                ChessPiece captured = match.makeMove(getPosition(), targetPosition);
+                ChessPosition sourcePosition = getPosition();
+                ChessPiece captured = match.makeMove(sourcePosition, targetPosition);
 
                 if (match.cannotDetectCheckScenario(king))
                     canSaveKing = true;
 
-                match.undoMove(getPosition(), targetPosition, captured);
+                match.undoMove(sourcePosition, targetPosition, captured);
 
                 return canSaveKing;
             });
@@ -118,6 +119,10 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
 
     public void decreaseMoveCount() {
         moveCount--;
+    }
+
+    public boolean hasNotMovedYet() {
+        return moveCount == 0;
     }
 
 }

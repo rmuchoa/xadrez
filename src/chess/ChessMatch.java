@@ -77,7 +77,28 @@ public class ChessMatch {
         board.placePieceOn(targetPosition, movingPiece);
         movingPiece.increaseMoveCount();
 
+        applyRookCastling(movingPiece, sourcePosition, targetPosition);
+
         return capturedPiece;
+    }
+
+    private void applyRookCastling(ChessPiece movingPiece, ChessPosition sourcePosition, ChessPosition targetPosition) {
+        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() + 2) {
+            ChessPosition towerPosition = movingPiece.getPosition().getNextBesideEastCastlingMovementPosition();
+            ChessPosition towerTargetPosition = movingPiece.getPosition().getNextBesideWestCastlingMovementPosition();
+            ChessPiece rook = board.removePieceFrom(towerPosition);
+            board.placePieceOn(towerTargetPosition, rook);
+            rook.increaseMoveCount();
+            return;
+        }
+
+        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() - 2) {
+            ChessPosition towerPosition = movingPiece.getPosition().getTwoBesideWestCastlingMovementPosition();
+            ChessPosition towerTargetPosition = movingPiece.getPosition().getNextBesideEastCastlingMovementPosition();
+            ChessPiece rook = board.removePieceFrom(towerPosition);
+            board.placePieceOn(towerTargetPosition, rook);
+            rook.increaseMoveCount();
+        }
     }
 
     public void undoMove(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
@@ -87,6 +108,27 @@ public class ChessMatch {
 
         if (capturedPiece != null)
             board.placePieceOn(targetPosition, capturedPiece);
+
+        unapplyRookCastling(movingPiece, sourcePosition, targetPosition);
+    }
+
+    private void unapplyRookCastling(ChessPiece movingPiece, ChessPosition sourcePosition, ChessPosition targetPosition) {
+        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() + 2) {
+            ChessPosition towerPosition = movingPiece.getPosition().getNextWestPosition();
+            ChessPosition towerTargetPosition = movingPiece.getPosition().getThreeBesideEastCastlingMovementPosition();
+            ChessPiece rook = board.removePieceFrom(towerPosition);
+            board.placePieceOn(towerTargetPosition, rook);
+            rook.increaseMoveCount();
+            return;
+        }
+
+        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() - 2) {
+            ChessPosition towerPosition = movingPiece.getPosition().getNextWestPosition();
+            ChessPosition towerTargetPosition = movingPiece.getPosition().getFourBesideWestCastlingMovementPosition();
+            ChessPiece rook = board.removePieceFrom(towerPosition);
+            board.placePieceOn(towerTargetPosition, rook);
+            rook.increaseMoveCount();
+        }
     }
 
     private void testForCheckMovement(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {

@@ -31,6 +31,10 @@ public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<
         return board.getPiecePlacedOn(position);
     }
 
+    protected boolean doesExistsOnBoard(T position) {
+        return board.doesExists(position);
+    }
+
     protected boolean doesNotExistsOnBoard(T position) {
         return board.doesNotExists(position);
     }

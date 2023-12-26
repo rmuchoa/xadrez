@@ -123,6 +123,28 @@ public class Rook extends ChessPiece {
         }
     }
 
+    public boolean isAllowedToCastling(boolean kingside) {
+        if (hasNotMovedYet()) {
+            if (kingside) {
+                ChessPosition step1 = getPosition().getNextBesideWestCastlingMovementPosition();
+                ChessPosition step2 = step1.getNextBesideWestCastlingMovementPosition();
+
+                return doesExistsOnBoard(step1) && thereIsNoPiecePlacedOn(step1) &&
+                    doesExistsOnBoard(step2) && thereIsNoPiecePlacedOn(step2);
+
+            } else {
+                ChessPosition step1 = getPosition().getNextBesideEastCastlingMovementPosition();
+                ChessPosition step2 = step1.getNextBesideEastCastlingMovementPosition();
+                ChessPosition step3 = step2.getNextBesideEastCastlingMovementPosition();
+
+                return doesExistsOnBoard(step1) && thereIsNoPiecePlacedOn(step1) &&
+                    doesExistsOnBoard(step2) && thereIsNoPiecePlacedOn(step2) &&
+                    doesExistsOnBoard(step3) && thereIsNoPiecePlacedOn(step3);
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "R";
@@ -131,7 +153,7 @@ public class Rook extends ChessPiece {
     public static RookBuilder builder() {
         return RookBuilder.builder();
     }
-    
+
     public static class RookBuilder {
 
         private ChessBoard board;
