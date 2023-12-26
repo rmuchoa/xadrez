@@ -2,6 +2,7 @@ package chess.pieces;
 
 import chess.ChessBoard;
 import chess.ChessException;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -10,8 +11,8 @@ import java.util.List;
 
 public class Bishop extends ChessPiece {
 
-    private Bishop(ChessBoard board, Color color) {
-        super(board, color);
+    private Bishop(ChessBoard board, ChessMatch match, Color color) {
+        super(board, match, color);
     }
 
     @Override
@@ -134,12 +135,18 @@ public class Bishop extends ChessPiece {
     public static class BishopBuilder {
 
         private ChessBoard board;
+        private ChessMatch match;
         private Color color;
 
         private BishopBuilder() {}
 
         public BishopBuilder board(ChessBoard board) {
             this.board = board;
+            return this;
+        }
+
+        public BishopBuilder match(ChessMatch match) {
+            this.match = match;
             return this;
         }
 
@@ -153,7 +160,7 @@ public class Bishop extends ChessPiece {
         }
         
         public Bishop build() {
-            return new Bishop(board, color);
+            return new Bishop(board, match, color);
         }
         
     }

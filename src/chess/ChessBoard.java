@@ -2,13 +2,14 @@ package chess;
 
 import boardgame.Board;
 import chess.pieces.King;
-import chess.pieces.Empty;
 import java.util.List;
 
 public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
 
-    public ChessBoard(int totalRows, int totalColumns) {
-        super(totalRows, totalColumns);
+    public static final int CHESS_BOARD_SIZE = 8;
+
+    public ChessBoard() {
+        super(CHESS_BOARD_SIZE, CHESS_BOARD_SIZE);
     }
 
     public List<ChessPiece> getAllPlacedPiecesOf(Color color) {
@@ -37,27 +38,14 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
 
     public static class ChessBoardBuilder {
 
-        private int totalRows;
-        private int totalColumns;
-
         private ChessBoardBuilder() {}
 
         public static ChessBoardBuilder builder() {
             return new ChessBoardBuilder();
         }
 
-        public ChessBoardBuilder totalRows(int totalRows) {
-            this.totalRows = totalRows;
-            return this;
-        }
-
-        public ChessBoardBuilder totalColumns(int totalColumns) {
-            this.totalColumns = totalColumns;
-            return this;
-        }
-
         public ChessBoard build() {
-            return new ChessBoard(totalRows, totalColumns);
+            return new ChessBoard();
         }
 
     }

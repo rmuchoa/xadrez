@@ -1,8 +1,16 @@
 package application;
 
+import chess.ChessBoard;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import chess.Color;
+import chess.pieces.Bishop;
+import chess.pieces.King;
+import chess.pieces.Knight;
+import chess.pieces.Pawn;
+import chess.pieces.Queen;
+import chess.pieces.Rook;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -10,11 +18,19 @@ import java.util.Scanner;
 
 public class Game {
 
-    public static void main(String[] args) {
+    private final Scanner scanner;
+    private final ChessMatch chessMatch;
+    private final ChessBoard chessBoard;
+    private final List<ChessPiece> capturedPieces;
 
-        Scanner scanner = new Scanner(System.in);
-        ChessMatch chessMatch = new ChessMatch();
-        List<ChessPiece> capturedPieces = new ArrayList<>();
+    public Game() {
+        scanner = new Scanner(System.in);
+        chessBoard = ChessBoard.builder().build();
+        chessMatch = new ChessMatch(chessBoard);
+        capturedPieces = new ArrayList<>();
+    }
+
+    public void startMatch() {
 
         while (chessMatch.isNotInCheckMate()) {
             try {
@@ -50,4 +66,49 @@ public class Game {
         UI.printMatch(chessMatch, capturedPieces);
 
     }
+
+    private void initialSetup() {
+        chessMatch.placeNewPiece('a', 1, Rook   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('b', 1, Knight .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('c', 1, Bishop .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('d', 1, Queen  .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('e', 1, King   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('f', 1, Bishop .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('g', 1, Knight .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('h', 1, Rook   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+
+        chessMatch.placeNewPiece('a', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('b', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('c', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('d', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('e', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('f', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('g', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+        chessMatch.placeNewPiece('h', 2, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.WHITE).build());
+
+        chessMatch.placeNewPiece('a', 8, Rook   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('b', 8, Knight .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('c', 8, Bishop .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('d', 8, Queen  .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('e', 8, King   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('f', 8, Bishop .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('g', 8, Knight .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('h', 8, Rook   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+
+        chessMatch.placeNewPiece('a', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('b', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('c', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('d', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('e', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('f', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('g', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+        chessMatch.placeNewPiece('h', 7, Pawn   .builder().board(chessBoard).match(chessMatch).color(Color.BLACK).build());
+    }
+
+    public static void main(String[] args) {
+        Game game = new Game();
+        game.initialSetup();
+        game.startMatch();
+    }
+
 }

@@ -2,6 +2,7 @@ package chess.pieces;
 
 import chess.ChessBoard;
 import chess.ChessException;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -10,8 +11,8 @@ import java.util.List;
 
 public class King extends ChessPiece {
 
-    private King(ChessBoard board, Color color) {
-        super(board, color);
+    private King(ChessBoard board, ChessMatch match, Color color) {
+        super(board, match, color);
     }
 
     @Override
@@ -138,6 +139,7 @@ public class King extends ChessPiece {
     public static class KingBuilder {
 
         private ChessBoard board;
+        private ChessMatch match;
         private Color color;
 
         private KingBuilder() {}
@@ -151,13 +153,18 @@ public class King extends ChessPiece {
             return this;
         }
 
+        public KingBuilder match(ChessMatch match) {
+            this.match = match;
+            return this;
+        }
+
         public KingBuilder color(Color color) {
             this.color = color;
             return this;
         }
 
         public King build() {
-            return new King(board, color);
+            return new King(board, match, color);
         }
 
     }

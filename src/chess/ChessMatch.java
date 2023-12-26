@@ -1,37 +1,20 @@
 package chess;
 
-import chess.pieces.Bishop;
 import chess.pieces.King;
-import chess.pieces.Knight;
-import chess.pieces.Pawn;
-import chess.pieces.Queen;
-import chess.pieces.Rook;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChessMatch {
-
-    public static final int CHESS_BOARD_SIZE = 8;
 
     private int turn;
     private boolean inCheck;
     private boolean inCheckMate;
     private Color currentPlayer;
-    private final List<ChessPiece> piecesOnTheBoard;
-    private final List<ChessPiece> capturedPieces;
     private final ChessBoard board;
 
-    public ChessMatch() {
-        board = ChessBoard.builder()
-            .totalRows(CHESS_BOARD_SIZE)
-            .totalColumns(CHESS_BOARD_SIZE)
-            .build();
-
-        piecesOnTheBoard = new ArrayList<>();
-        capturedPieces = new ArrayList<>();
-        currentPlayer = Color.WHITE;
-        turn = 1;
-        initialSetup();
+    public ChessMatch(ChessBoard board) {
+        this.board = board;
+        this.currentPlayer = Color.WHITE;
+        this.turn = 1;
     }
 
     public int getTurn() {
@@ -54,14 +37,13 @@ public class ChessMatch {
         return currentPlayer;
     }
 
-    private void placeNewPiece(char column, int row, ChessPiece piece) {
+    public void placeNewPiece(char column, int row, ChessPiece piece) {
         ChessPosition position = ChessPosition.builder()
             .chessColumn(column)
             .chessRow(row)
             .build();
 
         board.placePieceOn(position, piece);
-        piecesOnTheBoard.add(piece);
     }
 
     public List<List<ChessPiece>> getPieces() {
@@ -88,31 +70,23 @@ public class ChessMatch {
         return capturedPiece;
     }
 
-    private ChessPiece makeMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+    public ChessPiece makeMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
         ChessPiece movingPiece = board.removePieceFrom(sourcePosition);
         ChessPiece capturedPiece = board.removePieceFrom(targetPosition);
 
         board.placePieceOn(targetPosition, movingPiece);
         movingPiece.increaseMoveCount();
 
-        if (capturedPiece != null) {
-            piecesOnTheBoard.remove(capturedPiece);
-            capturedPieces.add(capturedPiece);
-        }
-
         return capturedPiece;
     }
 
-    private void undoMove(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
+    public void undoMove(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
         ChessPiece movingPiece = board.removePieceFrom(targetPosition);
         board.placePieceOn(sourcePosition, movingPiece);
         movingPiece.decreaseMoveCount();
 
-        if (capturedPiece != null) {
+        if (capturedPiece != null)
             board.placePieceOn(targetPosition, capturedPiece);
-            capturedPieces.remove(capturedPiece);
-            piecesOnTheBoard.add(capturedPiece);
-        }
     }
 
     private void testForCheckMovement(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
@@ -152,31 +126,13 @@ public class ChessMatch {
         King opponentKing = board.getOpponentKingFrom(currentPlayer);
         inCheckMate = board.getAllPlacedPiecesOf(opponentKing.getColor())
             .stream()
-            .noneMatch(opponentPiece -> pieceCanSaveKingFromCheck(opponentPiece, opponentKing));
+            .noneMatch(piece -> piece.canSaveKingFromCheck(opponentKing));
 
         if (inCheckMate)
             opponentKing.informCheckMate();
     }
 
-    private boolean pieceCanSaveKingFromCheck(ChessPiece piece, King king) {
-        return piece.getAllAvailableTargetPositions()
-            .stream()
-            .anyMatch(targetPosition -> {
-                boolean canSaveKing = false;
-                ChessPosition sourcePosition = piece.getPosition();
-
-                ChessPiece captured = makeMove(sourcePosition, targetPosition);
-
-                if (cannotDetectCheckScenario(king))
-                    canSaveKing = true;
-
-                undoMove(sourcePosition, targetPosition, captured);
-
-                return canSaveKing;
-            });
-    }
-
-    private boolean cannotDetectCheckScenario(King king) {
+    public boolean cannotDetectCheckScenario(King king) {
         return !canDetectCheckScenario(king);
     }
 
@@ -189,45 +145,6 @@ public class ChessMatch {
     private void nextTurn() {
         turn ++;
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
-    }
-
-    private void initialSetup() {
-        placeNewPiece('a', 1, Rook.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('b', 1, Knight.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('c', 1, Bishop.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('d', 1, Queen.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('e', 1, King.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('f', 1, Bishop.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('g', 1, Knight.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('h', 1, Rook.builder().board(board).color(Color.WHITE).build());
-
-        placeNewPiece('a', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('b', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('c', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('d', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('e', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('f', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('g', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('h', 2, Pawn.builder().board(board).color(Color.WHITE).build());
-
-        placeNewPiece('a', 8, Rook.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('b', 8, Knight.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('c', 8, Bishop.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('d', 8, Queen.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('e', 8, King.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('f', 8, Bishop.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('g', 8, Knight.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('h', 8, Rook.builder().board(board).color(Color.BLACK).build());
-
-        placeNewPiece('a', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('b', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('c', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('d', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('e', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('f', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('g', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('h', 7, Pawn.builder().board(board).color(Color.BLACK).build());
-
     }
 
     private void validateMovementOriginFrom(ChessPosition sourcePosition) {

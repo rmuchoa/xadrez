@@ -2,6 +2,7 @@ package chess.pieces;
 
 import chess.ChessBoard;
 import chess.ChessException;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.ChessPosition.MovementType;
@@ -11,8 +12,8 @@ import java.util.List;
 
 public class Pawn extends ChessPiece {
 
-    protected Pawn(ChessBoard board, Color color) {
-        super(board, color);
+    protected Pawn(ChessBoard board, ChessMatch match, Color color) {
+        super(board, match, color);
     }
 
     @Override
@@ -184,6 +185,7 @@ public class Pawn extends ChessPiece {
     public static class PawnBuilder {
 
         private ChessBoard board;
+        private ChessMatch match;
         private Color color;
 
         private PawnBuilder() {}
@@ -197,13 +199,18 @@ public class Pawn extends ChessPiece {
             return this;
         }
 
+        public PawnBuilder match(ChessMatch match) {
+            this.match = match;
+            return this;
+        }
+
         public PawnBuilder color(Color color) {
             this.color = color;
             return this;
         }
 
         public Pawn build() {
-            return new Pawn(board, color);
+            return new Pawn(board, match, color);
         }
 
     }

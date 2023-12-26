@@ -1,6 +1,6 @@
 package chess;
 
-import static chess.ChessMatch.CHESS_BOARD_SIZE;
+import static chess.ChessBoard.CHESS_BOARD_SIZE;
 
 import boardgame.BoardPosition;
 

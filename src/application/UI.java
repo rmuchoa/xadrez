@@ -1,6 +1,6 @@
 package application;
 
-import static chess.ChessMatch.CHESS_BOARD_SIZE;
+import static chess.ChessBoard.CHESS_BOARD_SIZE;
 
 import chess.ChessMatch;
 import chess.ChessPiece;

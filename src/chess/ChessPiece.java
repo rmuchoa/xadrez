@@ -6,13 +6,19 @@ import chess.pieces.King;
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;
+    private final ChessMatch match;
     private boolean inCheck;
     private boolean inCheckMate;
     private int moveCount;
 
-    protected ChessPiece(ChessBoard board, Color color) {
+    protected ChessPiece(ChessBoard board, ChessMatch match, Color color) {
         super(board);
+        this.match = match;
         this.color = color;
+    }
+
+    public ChessMatch getMatch() {
+        return match;
     }
 
     public Color getColor() {
@@ -74,6 +80,22 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return color != null && color.equals(otherColor);
     }
 
+    public boolean canSaveKingFromCheck(King king) {
+        return getAllAvailableTargetPositions()
+            .stream()
+            .anyMatch(targetPosition -> {
+                boolean canSaveKing = false;
+                ChessPiece captured = match.makeMove(getPosition(), targetPosition);
+
+                if (match.cannotDetectCheckScenario(king))
+                    canSaveKing = true;
+
+                match.undoMove(getPosition(), targetPosition, captured);
+
+                return canSaveKing;
+            });
+    }
+
     public void informCheck() {
         inCheck = true;
     }
@@ -97,4 +119,5 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
     public void decreaseMoveCount() {
         moveCount--;
     }
+
 }

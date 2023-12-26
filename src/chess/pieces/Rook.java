@@ -2,6 +2,7 @@ package chess.pieces;
 
 import chess.ChessBoard;
 import chess.ChessException;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -10,8 +11,8 @@ import java.util.List;
 
 public class Rook extends ChessPiece {
 
-    private Rook(ChessBoard board, Color color) {
-        super(board, color);
+    private Rook(ChessBoard board, ChessMatch match, Color color) {
+        super(board, match, color);
     }
 
     @Override
@@ -134,12 +135,18 @@ public class Rook extends ChessPiece {
     public static class RookBuilder {
 
         private ChessBoard board;
+        private ChessMatch match;
         private Color color;
 
         private RookBuilder() {}
 
         public RookBuilder board(ChessBoard board) {
             this.board = board;
+            return this;
+        }
+
+        public RookBuilder match(ChessMatch match) {
+            this.match = match;
             return this;
         }
 
@@ -153,7 +160,7 @@ public class Rook extends ChessPiece {
         }
         
         public Rook build() {
-            return new Rook(board, color);
+            return new Rook(board, match, color);
         }
         
     }
