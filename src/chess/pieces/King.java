@@ -27,10 +27,10 @@ public class King extends ChessPiece {
     private List<ChessPosition> getAllAvailableStraightPositions() {
         List<ChessPosition> straightMovements = new ArrayList<>();
 
-        ifAllowedAddNextAbovePositionOn(straightMovements);
-        ifAllowedAddNextBelowPositionOn(straightMovements);
-        ifAllowedAddNextRightPositionOn(straightMovements);
-        ifAllowedAddNextLeftPositionOn(straightMovements);
+        ifAllowedAddNorthPositionOn(straightMovements);
+        ifAllowedAddSouthPositionOn(straightMovements);
+        ifAllowedAddEastPositionOn(straightMovements);
+        ifAllowedAddWestPositionOn(straightMovements);
 
         return straightMovements;
     }
@@ -38,90 +38,90 @@ public class King extends ChessPiece {
     private List<ChessPosition> getAllAvailableDiagonalPositions() {
         List<ChessPosition> diagonalMovements = new ArrayList<>();
 
-        ifAllowedAddNextSuperiorRightPositionOn(diagonalMovements);
-        ifAllowedAddNextSuperiorLeftPositionOn(diagonalMovements);
-        ifAllowedAddNextInferiorRightPositionOn(diagonalMovements);
-        ifAllowedAddNextInferiorLeftPositionOn(diagonalMovements);
+        ifAllowedAddNorthEastPositionOn(diagonalMovements);
+        ifAllowedAddNorthWestPositionOn(diagonalMovements);
+        ifAllowedAddSouthEastPositionOn(diagonalMovements);
+        ifAllowedAddSouthWestPositionOn(diagonalMovements);
 
         return diagonalMovements;
     }
 
-    private void ifAllowedAddNextAbovePositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddNorthPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition abovePosition = getPosition().getNextAbovePosition();
+            ChessPosition northPosition = getPosition().getNextNorthPosition();
 
-            if (isAllowedToTarget(abovePosition))
-                possibleMovements.add(abovePosition);
+            if (isAllowedToTarget(northPosition))
+                possibleMovements.add(northPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextBelowPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddSouthPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition belowPosition = getPosition().getNextBelowPosition();
+            ChessPosition southPosition = getPosition().getNextSouthPosition();
 
-            if (isAllowedToTarget(belowPosition))
-                possibleMovements.add(belowPosition);
+            if (isAllowedToTarget(southPosition))
+                possibleMovements.add(southPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextRightPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddEastPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition rightPosition = getPosition().getNextRightPosition();
+            ChessPosition eastPosition = getPosition().getNextEastPosition();
 
-            if (isAllowedToTarget(rightPosition))
-                possibleMovements.add(rightPosition);
+            if (isAllowedToTarget(eastPosition))
+                possibleMovements.add(eastPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextLeftPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddWestPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition leftPosition = getPosition().getNextLeftPosition();
+            ChessPosition westPosition = getPosition().getNextWestPosition();
 
-            if (isAllowedToTarget(leftPosition))
-                possibleMovements.add(leftPosition);
+            if (isAllowedToTarget(westPosition))
+                possibleMovements.add(westPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextSuperiorRightPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddNorthEastPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition superiorRightPosition = getPosition().getNextDiagonalSuperiorRightPosition();
+            ChessPosition northEastPosition = getPosition().getNextNorthEastPosition();
 
-            if (isAllowedToTarget(superiorRightPosition))
-                possibleMovements.add(superiorRightPosition);
+            if (isAllowedToTarget(northEastPosition))
+                possibleMovements.add(northEastPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextSuperiorLeftPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddNorthWestPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition superiorLeftPosition = getPosition().getNextDiagonalSuperiorLeftPosition();
+            ChessPosition northWestPosition = getPosition().getNextNorthWestPosition();
 
-            if (isAllowedToTarget(superiorLeftPosition))
-                possibleMovements.add(superiorLeftPosition);
+            if (isAllowedToTarget(northWestPosition))
+                possibleMovements.add(northWestPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextInferiorRightPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddSouthEastPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition inferiorRightPosition = getPosition().getNextDiagonalInferiorRightPosition();
+            ChessPosition southEastPosition = getPosition().getNextSouthEastPosition();
 
-            if (isAllowedToTarget(inferiorRightPosition))
-                possibleMovements.add(inferiorRightPosition);
+            if (isAllowedToTarget(southEastPosition))
+                possibleMovements.add(southEastPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddNextInferiorLeftPositionOn(List<ChessPosition> possibleMovements) {
+    private void ifAllowedAddSouthWestPositionOn(List<ChessPosition> possibleMovements) {
         try {
-            ChessPosition inferiorLeftPosition = getPosition().getNextDiagonalInferiorLeftPosition();
+            ChessPosition southWestPosition = getPosition().getNextSouthWestPosition();
 
-            if (isAllowedToTarget(inferiorLeftPosition))
-                possibleMovements.add(inferiorLeftPosition);
+            if (isAllowedToTarget(southWestPosition))
+                possibleMovements.add(southWestPosition);
 
         } catch (ChessException ignored) {}
     }

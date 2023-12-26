@@ -1,7 +1,10 @@
 package chess;
 
+import chess.pieces.Bishop;
 import chess.pieces.King;
+import chess.pieces.Knight;
 import chess.pieces.Pawn;
+import chess.pieces.Queen;
 import chess.pieces.Rook;
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +193,12 @@ public class ChessMatch {
 
     private void initialSetup() {
         placeNewPiece('a', 1, Rook.builder().board(board).color(Color.WHITE).build());
-        placeNewPiece('d', 1, King.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('b', 1, Knight.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('c', 1, Bishop.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('d', 1, Queen.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('e', 1, King.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('f', 1, Bishop.builder().board(board).color(Color.WHITE).build());
+        placeNewPiece('g', 1, Knight.builder().board(board).color(Color.WHITE).build());
         placeNewPiece('h', 1, Rook.builder().board(board).color(Color.WHITE).build());
 
         placeNewPiece('a', 2, Pawn.builder().board(board).color(Color.WHITE).build());
@@ -203,7 +211,12 @@ public class ChessMatch {
         placeNewPiece('h', 2, Pawn.builder().board(board).color(Color.WHITE).build());
 
         placeNewPiece('a', 8, Rook.builder().board(board).color(Color.BLACK).build());
-        placeNewPiece('d', 8, King.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('b', 8, Knight.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('c', 8, Bishop.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('d', 8, Queen.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('e', 8, King.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('f', 8, Bishop.builder().board(board).color(Color.BLACK).build());
+        placeNewPiece('g', 8, Knight.builder().board(board).color(Color.BLACK).build());
         placeNewPiece('h', 8, Rook.builder().board(board).color(Color.BLACK).build());
 
         placeNewPiece('a', 7, Pawn.builder().board(board).color(Color.BLACK).build());

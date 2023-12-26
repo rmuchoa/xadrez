@@ -40,11 +40,11 @@ public class Pawn extends ChessPiece {
         List<ChessPosition> takingPositions = new ArrayList<>();
 
         if (isWhitePiece()) {
-            ifAllowedAddSuperiorRightDiagonalPositionOn(takingPositions);
-            ifAllowedAddSuperiorLeftDiagonalPositionOn(takingPositions);
+            ifAllowedAddNorthEastPositionOn(takingPositions);
+            ifAllowedAddNorthWestPositionOn(takingPositions);
         } else {
-            ifAllowedAddInferiorRightDiagonalPositionOn(takingPositions);
-            ifAllowedAddInferiorLeftDiagonalPositionOn(takingPositions);
+            ifAllowedAddSouthEastPositionOn(takingPositions);
+            ifAllowedAddSouthWestPositionOn(takingPositions);
         }
 
         return takingPositions;
@@ -52,102 +52,102 @@ public class Pawn extends ChessPiece {
 
     private void ifAllowedAddSingleWalkingPositionOn(List<ChessPosition> walkingPositions) {
         if (isWhitePiece())
-            ifAllowedAddSingleAbovePositionOn(walkingPositions);
+            ifAllowedAddSingleNorthPositionOn(walkingPositions);
         else
-            ifAllowedAddSingleBelowPositionOn(walkingPositions);
+            ifAllowedAddSingleSouthPositionOn(walkingPositions);
     }
 
     private void ifAllowedAddTwoWalkingPositionOn(List<ChessPosition> walkingPositions) {
         if (isWhitePiece())
-            ifAllowedAddTwoAbovePositionOn(walkingPositions);
+            ifAllowedAddTwoNorthPositionsOn(walkingPositions);
         else
-            ifAllowedAddTwoBelowPositionOn(walkingPositions);
+            ifAllowedAddTwoSouthPositionsOn(walkingPositions);
     }
 
-    private void ifAllowedAddSingleAbovePositionOn(List<ChessPosition> walkingPositions) {
+    private void ifAllowedAddSingleNorthPositionOn(List<ChessPosition> walkingPositions) {
         try {
-            ChessPosition abovePosition = getPosition().getNextAbovePosition();
+            ChessPosition northPosition = getPosition().getNextNorthPosition();
 
-            if (isAllowedToTarget(abovePosition))
-                walkingPositions.add(abovePosition);
+            if (isAllowedToTarget(northPosition))
+                walkingPositions.add(northPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddSingleBelowPositionOn(List<ChessPosition> walkingPositions) {
+    private void ifAllowedAddSingleSouthPositionOn(List<ChessPosition> walkingPositions) {
         try {
-            ChessPosition belowPosition = getPosition().getNextBelowPosition();
+            ChessPosition southPosition = getPosition().getNextSouthPosition();
 
-            if (isAllowedToTarget(belowPosition))
-                walkingPositions.add(belowPosition);
+            if (isAllowedToTarget(southPosition))
+                walkingPositions.add(southPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddTwoAbovePositionOn(List<ChessPosition> walkingPositions) {
+    private void ifAllowedAddTwoNorthPositionsOn(List<ChessPosition> walkingPositions) {
         try {
-            ChessPosition abovePosition = getPosition().getNextAbovePosition();
+            ChessPosition northPosition = getPosition().getNextNorthPosition();
 
-            if (isAllowedToTarget(abovePosition))
-                walkingPositions.add(abovePosition);
+            if (isAllowedToTarget(northPosition))
+                walkingPositions.add(northPosition);
 
-            ChessPosition secondAbovePosition = abovePosition.getNextAbovePosition();
-            if (isAllowedToTarget(secondAbovePosition))
-                walkingPositions.add(secondAbovePosition);
+            ChessPosition secondNorthPosition = northPosition.getNextNorthPosition();
+            if (isAllowedToTarget(secondNorthPosition))
+                walkingPositions.add(secondNorthPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddTwoBelowPositionOn(List<ChessPosition> walkingPositions) {
+    private void ifAllowedAddTwoSouthPositionsOn(List<ChessPosition> walkingPositions) {
         try {
-            ChessPosition belowPosition = getPosition().getNextBelowPosition();
+            ChessPosition southPosition = getPosition().getNextSouthPosition();
 
-            if (isAllowedToTarget(belowPosition))
-                walkingPositions.add(belowPosition);
+            if (isAllowedToTarget(southPosition))
+                walkingPositions.add(southPosition);
 
-            ChessPosition secondBelowPosition = belowPosition.getNextBelowPosition();
-            if (isAllowedToTarget(secondBelowPosition))
-                walkingPositions.add(secondBelowPosition);
+            ChessPosition secondSouthPosition = southPosition.getNextSouthPosition();
+            if (isAllowedToTarget(secondSouthPosition))
+                walkingPositions.add(secondSouthPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddSuperiorRightDiagonalPositionOn(List<ChessPosition> takingPositions) {
+    private void ifAllowedAddNorthEastPositionOn(List<ChessPosition> takingPositions) {
         try {
-            ChessPosition superiorRightPosition = getPosition().getNextDiagonalSuperiorRightPosition();
+            ChessPosition northEastPosition = getPosition().getNextNorthEastPosition();
 
-            if (isAllowedToTarget(superiorRightPosition))
-                takingPositions.add(superiorRightPosition);
+            if (isAllowedToTarget(northEastPosition))
+                takingPositions.add(northEastPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddSuperiorLeftDiagonalPositionOn(List<ChessPosition> takingPositions) {
+    private void ifAllowedAddNorthWestPositionOn(List<ChessPosition> takingPositions) {
         try {
-            ChessPosition superiorLeftPosition = getPosition().getNextDiagonalSuperiorLeftPosition();
+            ChessPosition northWestPosition = getPosition().getNextNorthWestPosition();
 
-            if (isAllowedToTarget(superiorLeftPosition))
-                takingPositions.add(superiorLeftPosition);
+            if (isAllowedToTarget(northWestPosition))
+                takingPositions.add(northWestPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddInferiorRightDiagonalPositionOn(List<ChessPosition> takingPositions) {
+    private void ifAllowedAddSouthEastPositionOn(List<ChessPosition> takingPositions) {
         try {
-            ChessPosition inferiorRightPosition = getPosition().getNextDiagonalInferiorRightPosition();
+            ChessPosition southEastPosition = getPosition().getNextSouthEastPosition();
 
-            if (isAllowedToTarget(inferiorRightPosition))
-                takingPositions.add(inferiorRightPosition);
+            if (isAllowedToTarget(southEastPosition))
+                takingPositions.add(southEastPosition);
 
         } catch (ChessException ignored) {}
     }
 
-    private void ifAllowedAddInferiorLeftDiagonalPositionOn(List<ChessPosition> takingPositions) {
+    private void ifAllowedAddSouthWestPositionOn(List<ChessPosition> takingPositions) {
         try {
-            ChessPosition inferiorLeftPosition = getPosition().getNextDiagonalInferiorLeftPosition();
+            ChessPosition southWestPosition = getPosition().getNextSouthWestPosition();
 
-            if (isAllowedToTarget(inferiorLeftPosition))
-                takingPositions.add(inferiorLeftPosition);
+            if (isAllowedToTarget(southWestPosition))
+                takingPositions.add(southWestPosition);
 
         } catch (ChessException ignored) {}
     }

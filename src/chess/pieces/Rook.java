@@ -18,107 +18,107 @@ public class Rook extends ChessPiece {
     public List<ChessPosition> getAllAvailableTargetPositions() {
         List<ChessPosition> possibleMovements = new ArrayList<>();
 
-        possibleMovements.addAll(getAllAvailableAbovePositions());
-        possibleMovements.addAll(getAllAvailableBelowPositions());
-        possibleMovements.addAll(getAllAvailableRightPositions());
-        possibleMovements.addAll(getAllAvailableLeftPositions());
+        possibleMovements.addAll(getAllAvailableNorthPositions());
+        possibleMovements.addAll(getAllAvailableSouthPositions());
+        possibleMovements.addAll(getAllAvailableEastPositions());
+        possibleMovements.addAll(getAllAvailableWestPositions());
 
         return possibleMovements;
     }
 
-    private List<ChessPosition> getAllAvailableAbovePositions() {
-        List<ChessPosition> aboveMovements = new ArrayList<>();
+    private List<ChessPosition> getAllAvailableNorthPositions() {
+        List<ChessPosition> northMovements = new ArrayList<>();
 
         try {
-            appendNextAvailablePositionAbove(aboveMovements, getPosition());
+            appendNextAvailableNorthPosition(northMovements, getPosition());
 
         } catch (ChessException ignored) {}
 
-        return aboveMovements;
+        return northMovements;
     }
 
-    private void appendNextAvailablePositionAbove(List<ChessPosition> aboveMovements, ChessPosition position) {
-        ChessPosition abovePosition = position.getNextAbovePosition();
+    private void appendNextAvailableNorthPosition(List<ChessPosition> northMovements, ChessPosition position) {
+        ChessPosition northPosition = position.getNextNorthPosition();
 
-        if (isAllowedToTarget(abovePosition)) {
-            aboveMovements.add(abovePosition);
+        if (isAllowedToTarget(northPosition)) {
+            northMovements.add(northPosition);
 
-            if (thereIsAnOpponentPlacedOn(abovePosition))
+            if (thereIsAnOpponentPlacedOn(northPosition))
                 return;
 
-            appendNextAvailablePositionAbove(aboveMovements, abovePosition);
+            appendNextAvailableNorthPosition(northMovements, northPosition);
         }
     }
 
-    private List<ChessPosition> getAllAvailableBelowPositions() {
-        List<ChessPosition> belowMovements = new ArrayList<>();
+    private List<ChessPosition> getAllAvailableSouthPositions() {
+        List<ChessPosition> southMovements = new ArrayList<>();
 
         try {
-            appendNextAvailablePositionBelow(belowMovements, getPosition());
+            appendNextAvailableSouthPosition(southMovements, getPosition());
 
         } catch (ChessException ignored) {}
 
-        return belowMovements;
+        return southMovements;
     }
 
-    private void appendNextAvailablePositionBelow(List<ChessPosition> belowMovements, ChessPosition position) {
-        ChessPosition belowPosition = position.getNextBelowPosition();
+    private void appendNextAvailableSouthPosition(List<ChessPosition> southMovements, ChessPosition position) {
+        ChessPosition southPosition = position.getNextSouthPosition();
 
-        if (isAllowedToTarget(belowPosition)) {
-            belowMovements.add(belowPosition);
+        if (isAllowedToTarget(southPosition)) {
+            southMovements.add(southPosition);
 
-            if (thereIsAnOpponentPlacedOn(belowPosition))
+            if (thereIsAnOpponentPlacedOn(southPosition))
                 return;
 
-            appendNextAvailablePositionBelow(belowMovements, belowPosition);
+            appendNextAvailableSouthPosition(southMovements, southPosition);
         }
     }
 
-    private List<ChessPosition> getAllAvailableRightPositions() {
-        List<ChessPosition> rightMovements = new ArrayList<>();
+    private List<ChessPosition> getAllAvailableEastPositions() {
+        List<ChessPosition> eastMovements = new ArrayList<>();
 
         try {
-            appendNextAvailablePositionRight(rightMovements, getPosition());
+            appendNextAvailableEastPosition(eastMovements, getPosition());
 
         } catch (ChessException ignored) {}
 
-        return rightMovements;
+        return eastMovements;
     }
 
-    private void appendNextAvailablePositionRight(List<ChessPosition> rightMovements, ChessPosition position) {
-        ChessPosition rightPosition = position.getNextRightPosition();
+    private void appendNextAvailableEastPosition(List<ChessPosition> eastMovements, ChessPosition position) {
+        ChessPosition eastPosition = position.getNextEastPosition();
 
-        if (isAllowedToTarget(rightPosition)) {
-            rightMovements.add(rightPosition);
+        if (isAllowedToTarget(eastPosition)) {
+            eastMovements.add(eastPosition);
 
-            if (thereIsAnOpponentPlacedOn(rightPosition))
+            if (thereIsAnOpponentPlacedOn(eastPosition))
                 return;
 
-            appendNextAvailablePositionRight(rightMovements, rightPosition);
+            appendNextAvailableEastPosition(eastMovements, eastPosition);
         }
     }
 
-    private List<ChessPosition> getAllAvailableLeftPositions() {
-        List<ChessPosition> leftMovements = new ArrayList<>();
+    private List<ChessPosition> getAllAvailableWestPositions() {
+        List<ChessPosition> westMovements = new ArrayList<>();
 
         try {
-            appendNextAvailablePositionLeft(leftMovements, getPosition());
+            appendNextAvailableWestPosition(westMovements, getPosition());
 
         } catch (ChessException ignored) {}
 
-        return leftMovements;
+        return westMovements;
     }
 
-    private void appendNextAvailablePositionLeft(List<ChessPosition> leftMovements, ChessPosition position) {
-        ChessPosition leftPosition = position.getNextLeftPosition();
+    private void appendNextAvailableWestPosition(List<ChessPosition> westMovements, ChessPosition position) {
+        ChessPosition westPosition = position.getNextWestPosition();
 
-        if (isAllowedToTarget(leftPosition)) {
-            leftMovements.add(leftPosition);
+        if (isAllowedToTarget(westPosition)) {
+            westMovements.add(westPosition);
 
-            if (thereIsAnOpponentPlacedOn(leftPosition))
+            if (thereIsAnOpponentPlacedOn(westPosition))
                 return;
 
-            appendNextAvailablePositionLeft(leftMovements, leftPosition);
+            appendNextAvailableWestPosition(westMovements, westPosition);
         }
     }
 
