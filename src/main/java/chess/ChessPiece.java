@@ -125,4 +125,10 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return moveCount == 0;
     }
 
+    @Override
+    public boolean equals(Object any) {
+        return any instanceof ChessPiece
+            && color.equals(((ChessPiece) any).getColor())
+            && super.equals(any);
+    }
 }

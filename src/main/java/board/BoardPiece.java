@@ -54,4 +54,14 @@ public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<
         return getAllAvailableTargetPositions().isEmpty();
     }
 
+    @Override
+    public boolean equals(Object any) {
+        return any instanceof BoardPiece
+            && position.equals(((BoardPiece<?, ?, ?>) any).getPosition());
+    }
+
+    @Override
+    public String toString() {
+        return position.toString();
+    }
 }

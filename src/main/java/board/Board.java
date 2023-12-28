@@ -59,8 +59,6 @@ public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B ext
     }
 
     public P removePieceFrom(T position) {
-        validatePositionExistence(position.getMatrixRow(), position.getMatrixColumn());
-
         if (isBoardPositionEmpty(position))
             return null;
 
@@ -136,7 +134,7 @@ public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B ext
 
     private static void validateBoardSizing(int rows, int columns) {
         if (rows < 1 || columns < 1)
-            throw new BoardException("Error creating board with "+rows+" rows and "+columns+": there must be at least 1 row and 1 column.");
+            throw new BoardException("Error creating board with "+rows+" rows and "+columns+" columns: there must be at least 1 row and 1 column.");
     }
 
     private List<List<P>> buildBidimensionalList(int totalRows, int totalColumns) {
