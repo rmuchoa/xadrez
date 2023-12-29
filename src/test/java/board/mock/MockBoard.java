@@ -17,7 +17,7 @@ public class MockBoard extends Board<MockBoardPosition, MockBoardPiece, MockBoar
         super(totalRows, totalColumns);
     }
 
-    public static MockBoardBuilder builder() {
+    public static MockBoardBuilder builderMock() {
         return MockBoardBuilder.builder();
     }
 

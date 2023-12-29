@@ -8,7 +8,9 @@ import chess.ChessPosition;
 import chess.Color;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class King extends ChessPiece {
 
     private King(ChessBoard board, ChessMatch match, Color color) {
@@ -177,43 +179,6 @@ public class King extends ChessPiece {
     @Override
     public String toString() {
         return "K";
-    }
-
-    public static KingBuilder builder() {
-        return KingBuilder.builder();
-    }
-
-    public static class KingBuilder {
-
-        private ChessBoard board;
-        private ChessMatch match;
-        private Color color;
-
-        private KingBuilder() {}
-
-        public static KingBuilder builder() {
-            return new KingBuilder();
-        }
-
-        public KingBuilder board(ChessBoard board) {
-            this.board = board;
-            return this;
-        }
-
-        public KingBuilder match(ChessMatch match) {
-            this.match = match;
-            return this;
-        }
-
-        public KingBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-
-        public King build() {
-            return new King(board, match, color);
-        }
-
     }
 
 }

@@ -20,7 +20,7 @@ public class BoardPieceTest {
 
     @BeforeEach
     public void setUp() {
-        mockedBoard = MockBoard.builder().filled().stub();
+        mockedBoard = MockBoard.builderMock().filled().stub();
         mockedPosition = MockBoardPosition.builder().filled().stub();
         mockedPiece = MockBoardPiece.builder().position(mockedPosition).board(mockedBoard).stub();
     }
@@ -54,7 +54,7 @@ public class BoardPieceTest {
         // given
         MockBoardPiece expectedPiece = MockBoardPiece.builder().position(mockedPosition).build();
         StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builder().stubGetPiecePlacedOn(otherPosition, expectedPiece).filled().stub();
+        StubMockBoard board = MockBoard.builderMock().stubGetPiecePlacedOn(otherPosition, expectedPiece).filled().stub();
         MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
 
         // when
@@ -69,7 +69,7 @@ public class BoardPieceTest {
     public void shouldReturnTrueWhenPositionDoesExistsOnBoard() {
         // given
         StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builder().stubDoesExists(otherPosition, Boolean.TRUE).filled().stub();
+        StubMockBoard board = MockBoard.builderMock().stubDoesExists(otherPosition, Boolean.TRUE).filled().stub();
         MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
 
         // when
@@ -84,7 +84,7 @@ public class BoardPieceTest {
     public void shouldReturnFalseWhenPositionDoesNotExistsOnBoardOnAskingPieceDoesExistsOnBoard() {
         // given
         StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builder().stubDoesExists(otherPosition, Boolean.FALSE).filled().stub();
+        StubMockBoard board = MockBoard.builderMock().stubDoesExists(otherPosition, Boolean.FALSE).filled().stub();
         MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
 
         // when
@@ -99,7 +99,7 @@ public class BoardPieceTest {
     public void shouldReturnTrueWhenPositionDoesNotExistsOnBoard() {
         // given
         StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builder().stubDoesNotExists(otherPosition, Boolean.TRUE).filled().stub();
+        StubMockBoard board = MockBoard.builderMock().stubDoesNotExists(otherPosition, Boolean.TRUE).filled().stub();
         MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
 
         // when
@@ -114,7 +114,7 @@ public class BoardPieceTest {
     public void shouldReturnFalseWhenPositionDoesExistsOnBoardOnAskingPieceDoesNotExistsOnBoard() {
         // given
         StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builder().stubDoesNotExists(otherPosition, Boolean.FALSE).filled().stub();
+        StubMockBoard board = MockBoard.builderMock().stubDoesNotExists(otherPosition, Boolean.FALSE).filled().stub();
         MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
 
         // when

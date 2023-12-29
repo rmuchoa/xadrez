@@ -8,7 +8,9 @@ import chess.ChessPosition;
 import chess.Color;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class Bishop extends ChessPiece {
 
     private Bishop(ChessBoard board, ChessMatch match, Color color) {
@@ -126,43 +128,6 @@ public class Bishop extends ChessPiece {
     @Override
     public String toString() {
         return "B";
-    }
-    
-    public static BishopBuilder builder() {
-        return BishopBuilder.builder();
-    }
-    
-    public static class BishopBuilder {
-
-        private ChessBoard board;
-        private ChessMatch match;
-        private Color color;
-
-        private BishopBuilder() {}
-
-        public BishopBuilder board(ChessBoard board) {
-            this.board = board;
-            return this;
-        }
-
-        public BishopBuilder match(ChessMatch match) {
-            this.match = match;
-            return this;
-        }
-
-        public BishopBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-        
-        public static BishopBuilder builder() {
-            return new BishopBuilder();
-        }
-        
-        public Bishop build() {
-            return new Bishop(board, match, color);
-        }
-        
     }
 
 }

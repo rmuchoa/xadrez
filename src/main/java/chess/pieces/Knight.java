@@ -8,7 +8,9 @@ import chess.ChessPosition;
 import chess.Color;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class Knight extends ChessPiece {
 
     private Knight(ChessBoard board, ChessMatch match, Color color) {
@@ -115,43 +117,6 @@ public class Knight extends ChessPiece {
     @Override
     public String toString() {
         return "N";
-    }
-
-    public static KnightBuilder builder() {
-        return KnightBuilder.builder();
-    }
-
-    public static class KnightBuilder {
-
-        private ChessBoard board;
-        private ChessMatch match;
-        private Color color;
-
-        private KnightBuilder() {}
-
-        public static KnightBuilder builder() {
-            return new KnightBuilder();
-        }
-
-        public KnightBuilder board(ChessBoard board) {
-            this.board = board;
-            return this;
-        }
-
-        public KnightBuilder match(ChessMatch match) {
-            this.match = match;
-            return this;
-        }
-
-        public KnightBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-
-        public Knight build() {
-            return new Knight(board, match, color);
-        }
-
     }
 
 }

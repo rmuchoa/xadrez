@@ -3,7 +3,9 @@ package chess;
 import board.Board;
 import chess.pieces.King;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
 
     public static final int CHESS_BOARD_SIZE = 8;
@@ -18,10 +20,6 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
             .toList();
     }
 
-    public static ChessBoardBuilder builder() {
-        return ChessBoardBuilder.builder();
-    }
-
     public King getOpponentKingFrom(Color currentPlayer) {
         Color oponentColor = Color.WHITE.equals(currentPlayer) ? Color.BLACK : Color.WHITE;
         return getKingOf(oponentColor);
@@ -34,20 +32,6 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
             .map(piece -> (King) piece)
             .findAny()
             .orElse(null);
-    }
-
-    public static class ChessBoardBuilder {
-
-        private ChessBoardBuilder() {}
-
-        public static ChessBoardBuilder builder() {
-            return new ChessBoardBuilder();
-        }
-
-        public ChessBoard build() {
-            return new ChessBoard();
-        }
-
     }
 
 }

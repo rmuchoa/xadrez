@@ -9,7 +9,9 @@ import chess.ChessPosition.MovementType;
 import chess.Color;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class Pawn extends ChessPiece {
 
     protected Pawn(ChessBoard board, ChessMatch match, Color color) {
@@ -176,43 +178,6 @@ public class Pawn extends ChessPiece {
     @Override
     public String toString() {
         return "P";
-    }
-
-    public static PawnBuilder builder() {
-        return PawnBuilder.builder();
-    }
-
-    public static class PawnBuilder {
-
-        private ChessBoard board;
-        private ChessMatch match;
-        private Color color;
-
-        private PawnBuilder() {}
-
-        public static PawnBuilder builder() {
-            return new PawnBuilder();
-        }
-
-        public PawnBuilder board(ChessBoard board) {
-            this.board = board;
-            return this;
-        }
-
-        public PawnBuilder match(ChessMatch match) {
-            this.match = match;
-            return this;
-        }
-
-        public PawnBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-
-        public Pawn build() {
-            return new Pawn(board, match, color);
-        }
-
     }
 
 }

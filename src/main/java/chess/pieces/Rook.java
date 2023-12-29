@@ -8,10 +8,12 @@ import chess.ChessPosition;
 import chess.Color;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class Rook extends ChessPiece {
 
-    private Rook(ChessBoard board, ChessMatch match, Color color) {
+    protected Rook(ChessBoard board, ChessMatch match, Color color) {
         super(board, match, color);
     }
 
@@ -148,43 +150,6 @@ public class Rook extends ChessPiece {
     @Override
     public String toString() {
         return "R";
-    }
-    
-    public static RookBuilder builder() {
-        return RookBuilder.builder();
-    }
-
-    public static class RookBuilder {
-
-        private ChessBoard board;
-        private ChessMatch match;
-        private Color color;
-
-        private RookBuilder() {}
-
-        public RookBuilder board(ChessBoard board) {
-            this.board = board;
-            return this;
-        }
-
-        public RookBuilder match(ChessMatch match) {
-            this.match = match;
-            return this;
-        }
-
-        public RookBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-        
-        public static RookBuilder builder() {
-            return new RookBuilder();
-        }
-        
-        public Rook build() {
-            return new Rook(board, match, color);
-        }
-        
     }
 
 }

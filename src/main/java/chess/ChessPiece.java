@@ -2,7 +2,9 @@ package chess;
 
 import board.BoardPiece;
 import chess.pieces.King;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;

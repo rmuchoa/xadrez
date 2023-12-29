@@ -1,7 +1,9 @@
 package board;
 
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
     private final B board;
@@ -64,4 +66,5 @@ public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<
     public String toString() {
         return position.toString();
     }
+
 }

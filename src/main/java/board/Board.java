@@ -3,7 +3,9 @@ package board;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
     private final int totalRows;
