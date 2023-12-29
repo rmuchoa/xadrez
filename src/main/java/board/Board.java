@@ -20,14 +20,6 @@ public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B ext
         this.boardPieces = buildBidimensionalList(totalRows, totalColumns);
     }
 
-    public int getTotalRows() {
-        return totalRows;
-    }
-
-    public int getTotalColumns() {
-        return totalColumns;
-    }
-
     public List<List<P>> getAllPieces() {
         return boardPieces;
     }

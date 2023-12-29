@@ -1,46 +1,55 @@
 package board;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.junit.jupiter.api.Assertions.*;
 import static java.lang.String.format;
 
-import board.mock.MockBoard;
-import board.mock.MockBoard.StubMockBoard;
-import board.mock.MockBoardPiece;
-import board.mock.MockBoardPiece.StubMockBoardPiece;
-import board.mock.MockBoardPosition;
-import board.mock.MockBoardPosition.StubMockBoardPosition;
+import board.dummy.DummyBoard;
+import board.dummy.DummyBoardPiece;
+import board.dummy.DummyBoardPosition;
+import board.dummy.builder.DummyBoardPositionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 public class BoardPieceTest {
 
-    private StubMockBoard mockedBoard;
-    private StubMockBoardPosition mockedPosition;
-    private StubMockBoardPiece mockedPiece;
+    @Mock
+    private DummyBoard board;
+    @Mock
+    private DummyBoardPiece expectedPiece;
+    @Mock
+    private DummyBoardPosition expectedPosition;
+    @Mock
+    private DummyBoardPosition targetPosition;
+    @Mock
+    private DummyBoardPosition otherPosition;
 
     @BeforeEach
     public void setUp() {
-        mockedBoard = MockBoard.builderMock().filled().stub();
-        mockedPosition = MockBoardPosition.builder().filled().stub();
-        mockedPiece = MockBoardPiece.builder().position(mockedPosition).board(mockedBoard).stub();
+        openMocks(this);
     }
 
     @Test
     public void shouldPiecePositionMustBeEqualsThePositionThatPieceWasPlacedOn() {
         // given
-        MockBoardPiece piece = MockBoardPiece.builder().board(mockedBoard).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().board(board).build();
 
         // when
-        piece.placeOnPosition(mockedPosition);
+        piece.placeOnPosition(expectedPosition);
 
         // then
-        assertEquals(mockedPosition, piece.getPosition(), format("Positions are not equals! %s, %s", mockedPosition, piece.getPosition()));
+        assertEquals(expectedPosition, piece.getPosition(), format("Positions are not equals! %s, %s", expectedPosition, piece.getPosition()));
     }
 
     @Test
     public void shouldPiecePositionMustBeRemoveFromFromPieceThatWasTakenOutOf() {
         // given
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(mockedBoard).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
         piece.takeOutOfPosition();
@@ -52,84 +61,77 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnPlacedPieceOnBoardWhenGetByPosition() {
         // given
-        MockBoardPiece expectedPiece = MockBoardPiece.builder().position(mockedPosition).build();
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builderMock().stubGetPiecePlacedOn(otherPosition, expectedPiece).filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
+        when(board.getPiecePlacedOn(eq(expectedPosition))).thenReturn(expectedPiece);
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
-        MockBoardPiece realPiece = piece.getBoardPiecePlacedOn(otherPosition);
+        DummyBoardPiece resultantPiece = piece.getBoardPiecePlacedOn(expectedPosition);
 
         // then
-        board.verifyThatMethodGetPiecePlacedOnWasCalledAtLeastOnce(otherPosition);
-        assertEquals(expectedPiece, realPiece, format("Positions are not equals! %s, %s", expectedPiece, realPiece));
+        verify(board, atLeastOnce()).getPiecePlacedOn(eq(expectedPosition));
+        assertEquals(expectedPiece, resultantPiece, format("Pieces are not equals! %s, %s", expectedPiece, resultantPiece));
     }
 
     @Test
     public void shouldReturnTrueWhenPositionDoesExistsOnBoard() {
         // given
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builderMock().stubDoesExists(otherPosition, Boolean.TRUE).filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
+        when(board.doesExists(eq(expectedPosition))).thenReturn(Boolean.TRUE);
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
-        boolean existenceResult = piece.doesExistsOnBoard(otherPosition);
+        boolean existenceResult = piece.doesExistsOnBoard(expectedPosition);
 
         // then
-        board.verifyThatMethodDoesExistsWasCalledAtLeastOnce(otherPosition);
+        verify(board, atLeastOnce()).doesExists(eq(expectedPosition));
         assertTrue(existenceResult, format("Existence suppose to be true, but was %s!", existenceResult));
     }
 
     @Test
     public void shouldReturnFalseWhenPositionDoesNotExistsOnBoardOnAskingPieceDoesExistsOnBoard() {
         // given
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builderMock().stubDoesExists(otherPosition, Boolean.FALSE).filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
+        when(board.doesExists(eq(expectedPosition))).thenReturn(Boolean.FALSE);
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
-        boolean existenceResult = piece.doesExistsOnBoard(otherPosition);
+        boolean existenceResult = piece.doesExistsOnBoard(expectedPosition);
 
         // then
-        board.verifyThatMethodDoesExistsWasCalledAtLeastOnce(otherPosition);
+        verify(board, atLeastOnce()).doesExists(eq(expectedPosition));
         assertFalse(existenceResult, format("Existence suppose to be false, but was %s!", existenceResult));
     }
 
     @Test
     public void shouldReturnTrueWhenPositionDoesNotExistsOnBoard() {
         // given
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builderMock().stubDoesNotExists(otherPosition, Boolean.TRUE).filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
+        when(board.doesNotExists(eq(expectedPosition))).thenReturn(Boolean.TRUE);
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
-        boolean notExistenceResult = piece.doesNotExistsOnBoard(otherPosition);
+        boolean notExistenceResult = piece.doesNotExistsOnBoard(expectedPosition);
 
         // then
-        board.verifyThatMethodDoesNotExistsWasCalledAtLeastOnce(otherPosition);
+        verify(board, atLeastOnce()).doesNotExists(eq(expectedPosition));
         assertTrue(notExistenceResult, format("Not existence suppose to be true, but was %s!", notExistenceResult));
     }
 
     @Test
     public void shouldReturnFalseWhenPositionDoesExistsOnBoardOnAskingPieceDoesNotExistsOnBoard() {
         // given
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoard board = MockBoard.builderMock().stubDoesNotExists(otherPosition, Boolean.FALSE).filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().position(mockedPosition).board(board).build();
+        when(board.doesNotExists(eq(expectedPosition))).thenReturn(Boolean.FALSE);
+        DummyBoardPiece piece = DummyBoardPiece.builder().position(otherPosition).board(board).build();
 
         // when
-        boolean notExistenceResult = piece.doesNotExistsOnBoard(otherPosition);
+        boolean notExistenceResult = piece.doesNotExistsOnBoard(expectedPosition);
 
         // then
-        board.verifyThatMethodDoesNotExistsWasCalledAtLeastOnce(otherPosition);
+        verify(board, atLeastOnce()).doesNotExists(eq(expectedPosition));
         assertFalse(notExistenceResult, format("Not existence suppose to be false, but was %s!", notExistenceResult));
     }
 
     @Test
     public void shouldReturnTrueOnCallingCanTargetThisWhenPositionIsOneOfAvailableTargetPositions() {
         // given
-        StubMockBoardPosition targetPosition = MockBoardPosition.builder().filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(targetPosition).position(mockedPosition).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(targetPosition).position(expectedPosition).build();
 
         // when
         boolean targetable = piece.canTargetThis(targetPosition);
@@ -141,11 +143,10 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnFalseOnCallingCanTargetThisWhenPositionIsNotOneOfAvailableTargetPositions() {
         // given
-        StubMockBoardPosition targetPosition = MockBoardPosition.builder().filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(targetPosition).position(mockedPosition).build();
+        when(otherPosition.getMatrixRow()).thenReturn(DummyBoardPositionBuilder.SECOND_MATRIX_ROW);
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(targetPosition).position(expectedPosition).build();
 
         // when
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().anotherMatrixColumn().stub();
         boolean targetable = piece.canTargetThis(otherPosition);
 
         // then
@@ -155,11 +156,10 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnTrueOnCallingCanNotTargetThisWhenPositionIsNotOneOfAvailableTargetPositions() {
         // given
-        StubMockBoardPosition targetPosition = MockBoardPosition.builder().filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(targetPosition).position(mockedPosition).build();
+        when(otherPosition.getMatrixColumn()).thenReturn(DummyBoardPositionBuilder.SECOND_MATRIX_COLUMN);
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(targetPosition).position(expectedPosition).build();
 
         // when
-        StubMockBoardPosition otherPosition = MockBoardPosition.builder().filled().anotherMatrixColumn().stub();
         boolean targetable = piece.canNotTargetThis(otherPosition);
 
         // then
@@ -169,8 +169,7 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnFalseOnCallingCanNotTargetThisWhenPositionIsOneOfAvailableTargetPositions() {
         // given
-        StubMockBoardPosition targetPosition = MockBoardPosition.builder().filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(targetPosition).position(mockedPosition).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(targetPosition).position(expectedPosition).build();
 
         // when
         boolean targetable = piece.canNotTargetThis(targetPosition);
@@ -182,7 +181,7 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnTrueOnCallingHasNoAvailableMovementsWhenAvailableTargetPositionsListIsEmpty() {
         // given
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(null).position(mockedPosition).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(null).position(expectedPosition).build();
 
         // when
         boolean imobility = piece.hasNoAvailableMovements();
@@ -194,8 +193,7 @@ public class BoardPieceTest {
     @Test
     public void shouldReturnFalseOnCallingHasNoAvailableMovementsWhenAvailableTargetPositionsListHasAtLeastOncePosition() {
         // given
-        StubMockBoardPosition targetPosition = MockBoardPosition.builder().filled().stub();
-        MockBoardPiece piece = MockBoardPiece.builder().availableTargetPosition(targetPosition).position(mockedPosition).build();
+        DummyBoardPiece piece = DummyBoardPiece.builder().availableTargetPosition(targetPosition).position(expectedPosition).build();
 
         // when
         boolean imobility = piece.hasNoAvailableMovements();

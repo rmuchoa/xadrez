@@ -1,26 +1,39 @@
 package board;
 
-import static board.mock.MockBoard.TOTAL_COLUMNS;
-import static board.mock.MockBoard.TOTAL_ROWS;
+import static board.dummy.builder.DummyBoardBuilder.TOTAL_COLUMNS;
+import static board.dummy.builder.DummyBoardBuilder.TOTAL_ROWS;
 import static org.junit.jupiter.api.Assertions.*;
 import static java.lang.String.format;
+import static org.mockito.MockitoAnnotations.openMocks;
 
-import board.mock.MockBoard;
-import board.mock.MockBoardPiece;
-import board.mock.MockBoardPiece.StubMockBoardPiece;
-import board.mock.MockBoardPosition;
-import board.mock.MockBoardPosition.StubMockBoardPosition;
+import board.dummy.DummyBoard;
+import board.dummy.DummyBoardPiece;
+import board.dummy.DummyBoardPosition;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 public class BoardTest {
+
+    @Mock
+    private DummyBoardPiece otherPiece;
+    @Mock
+    private DummyBoardPiece expectedPiece;
+    @Mock
+    private DummyBoardPosition expectedPosition;
+
+    @BeforeEach
+    public void setUp() {
+        openMocks(this);
+    }
 
     @Test
     public void shouldThrowBoardExceptionOnBuildBoardWhenTotalRowsIsZero() {
         // given
         try {
             // when
-            MockBoard.builderMock().totalRows(0).totalColumns().build();
+            DummyBoard.dummyBuilder().totalRows(0).totalColumns().build();
 
             // then
             fail("The expected exception was not received");
@@ -34,7 +47,7 @@ public class BoardTest {
         // given
         try {
             // when
-            MockBoard.builderMock().totalRows().totalColumns(0).build();
+            DummyBoard.dummyBuilder().totalRows().totalColumns(0).build();
 
             // then
             fail("The expected exception was not received");
@@ -46,10 +59,10 @@ public class BoardTest {
     @Test
     public void shouldReturnEmptyListOnCallingGetAllPlacedPiecesWhenBoardHasNoOnePlacedPiece() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(null, null).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(null, null).build();
 
         // when
-        List<MockBoardPiece> placedPieces = board.getAllPlacedPieces();
+        List<DummyBoardPiece> placedPieces = board.getAllPlacedPieces();
 
         // then
         assertTrue(placedPieces.isEmpty(), format("The placed pieces list suppose to be empty, but has %s items!", placedPieces.size()));
@@ -58,13 +71,11 @@ public class BoardTest {
     @Test
     public void shouldReturnAListContainingExpectedPieceOnCallingGetAllPlacedPiecesWhenBoardHasPlacedThatPiece() {
         // given
-        StubMockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn().stub();
-        StubMockBoardPiece expectedPiece = MockBoardPiece.builder().position(position).stub();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(expectedPiece, position).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(expectedPiece, expectedPosition).build();
 
         // when
-        List<MockBoardPiece> placedPieces = board.getAllPlacedPieces();
-        MockBoardPiece resultantPiece = placedPieces.get(0);
+        List<DummyBoardPiece> placedPieces = board.getAllPlacedPieces();
+        DummyBoardPiece resultantPiece = placedPieces.get(0);
 
         // then
         assertFalse(placedPieces.isEmpty(), format("The placed pieces list suppose to not be empty, but has %s items!", placedPieces.size()));
@@ -74,8 +85,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingGetPiecePlacedOnWhenPassesBoardPositionWithNegativeMatrixRow() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow(-1).matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow(-1).matrixColumn().build();
 
         // when
         try {
@@ -90,8 +101,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingGetPiecePlacedOnWhenPassesBoardPositionWithNegativeMatrixColumn() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn(-1).build();
 
         // when
         try {
@@ -106,8 +117,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingGetPiecePlacedOnWhenPassesBoardPositionWithMatrixRowGreaterThanTotalRows() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow(TOTAL_ROWS+1).matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow(TOTAL_ROWS+1).matrixColumn().build();
 
         // when
         try {
@@ -122,8 +133,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingGetPiecePlacedOnWhenPassesBoardPositionWithMatrixColumnGreaterThanTotalColumns() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn(TOTAL_COLUMNS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn(TOTAL_COLUMNS+1).build();
 
         // when
         try {
@@ -139,12 +150,11 @@ public class BoardTest {
     @Test
     public void shouldReturnGivenPieceOnCallingGetPiecePlacedOnWhenAskingForPlacedPosition() {
         // given
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn().build();
-        StubMockBoardPiece expectedPiece = MockBoardPiece.builder().position(position).stub();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(expectedPiece, position).build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(expectedPiece, position).build();
 
         // when
-        MockBoardPiece resultantPiece = board.getPiecePlacedOn(position);
+        DummyBoardPiece resultantPiece = board.getPiecePlacedOn(position);
 
         // then
         assertEquals(expectedPiece, resultantPiece, format("Expected piece is not equals resultant piece. %s from %s and %s from %s.", expectedPiece, expectedPiece.getPosition(), resultantPiece, resultantPiece.getPosition()));
@@ -153,13 +163,12 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingPlacePieceOnWhenAlreadyHaveSomePiecePlacedOnGivenPosition() {
         // given
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn().build();
-        StubMockBoardPiece otherPiece = MockBoardPiece.builder().position(position).stub();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(otherPiece, position).build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(otherPiece, position).build();
 
         // then
         try {
-            StubMockBoardPiece newPiece = MockBoardPiece.builder().position(position).stub();
+            DummyBoardPiece newPiece = expectedPiece;
             board.placePieceOn(position, newPiece);
 
             fail("The expected exception was not properly thrown");
@@ -173,24 +182,23 @@ public class BoardTest {
     @Test
     public void shouldPlacePieceOnBoardPositionOnCallingPlacePieceOnWhenGivenPositionIsAvailableForNewPlacements() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(null, null).build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn().build();
-        StubMockBoardPiece newPiece = MockBoardPiece.builder().position(position).stub();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(null, null).build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn().build();
 
         // when
-        board.placePieceOn(position, newPiece);
+        board.placePieceOn(position, expectedPiece);
 
         // then
-        List<List<MockBoardPiece>> pieces = board.getAllPieces();
-        MockBoardPiece placedPiece = pieces.get(position.getMatrixRow()).get(position.getMatrixColumn());
-        assertEquals(newPiece, placedPiece, format("The placed piece is not equals the given new piece informed. %s from %s and %s from %s.", placedPiece, placedPiece.getPosition(), newPiece, newPiece.getPosition()));
+        List<List<DummyBoardPiece>> pieces = board.getAllPieces();
+        DummyBoardPiece placedPiece = pieces.get(position.getMatrixRow()).get(position.getMatrixColumn());
+        assertEquals(expectedPiece, placedPiece, format("The placed piece is not equals the given new piece informed. %s from %s and %s from %s.", placedPiece, placedPiece.getPosition(), expectedPiece, expectedPiece.getPosition()));
     }
 
     @Test
     public void shouldThrowBoardExceptionOnCallingRemovePieceFromWhenPassesBoardPositionWithNegativeMatrixRow() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow(-1).matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow(-1).matrixColumn().build();
 
         // when
         try {
@@ -205,8 +213,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingRemovePieceFromWhenPassesBoardPositionWithNegativeMatrixColumn() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn(-1).build();
 
         // when
         try {
@@ -221,8 +229,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingRemovePieceFromWhenPassesBoardPositionWithMatrixRowGreaterThanTotalRows() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow(TOTAL_ROWS+1).matrixColumn().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow(TOTAL_ROWS+1).matrixColumn().build();
 
         // when
         try {
@@ -237,8 +245,8 @@ public class BoardTest {
     @Test
     public void shouldThrowBoardExceptionOnCallingRemovePieceFromWhenPassesBoardPositionWithMatrixColumnGreaterThanTotalColumns() {
         // given
-        MockBoard board = MockBoard.builderMock().filled().build();
-        MockBoardPosition position = MockBoardPosition.builder().matrixRow().matrixColumn(TOTAL_COLUMNS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
+        DummyBoardPosition position = DummyBoardPosition.builder().matrixRow().matrixColumn(TOTAL_COLUMNS+1).build();
 
         // when
         try {
@@ -253,11 +261,11 @@ public class BoardTest {
     @Test
     public void shouldReturnNullPieceOnCallingRemovePieceFromWhenBoardPositionIsEmpty() {
         // given
-        MockBoardPosition givenPosition = MockBoardPosition.builder().filled().build();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(null, givenPosition).build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(null, givenPosition).build();
 
         // when
-        MockBoardPiece removedPiece = board.removePieceFrom(givenPosition);
+        DummyBoardPiece removedPiece = board.removePieceFrom(givenPosition);
 
         // then
         assertNull(removedPiece, format("Removed piece suppose to be null, but was not %s.", removedPiece));
@@ -266,12 +274,10 @@ public class BoardTest {
     @Test
     public void shouldReturnRemovedPieceOnCallingRemovePieceFromWhenPieceIsPlacedOnInformedBoardPosition() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoardPiece expectedPiece = MockBoardPiece.builder().position(givenPosition).stub();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(expectedPiece, givenPosition).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(expectedPiece, expectedPosition).build();
 
         // when
-        MockBoardPiece removedPiece = board.removePieceFrom(givenPosition);
+        DummyBoardPiece removedPiece = board.removePieceFrom(expectedPosition);
 
         // then
         assertEquals(expectedPiece, removedPiece, format("Expected piece is not equals removed piece! %s from %s and %s from.", expectedPiece, expectedPiece.getPosition(), removedPiece, removedPiece.getPosition()));
@@ -280,24 +286,23 @@ public class BoardTest {
     @Test
     public void shouldTakeOutPieceFromPositionOnCallingRemovePieceFromWhenBoardRemovePieceFromPosition() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().stub();
-        StubMockBoardPiece expectedPiece = MockBoardPiece.builder().position(givenPosition).stub();
-        MockBoard board = MockBoard.builderMock().filled().withPlacedPiece(expectedPiece, givenPosition).build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().withPlacedPiece(expectedPiece, expectedPosition).build();
 
         // when
         board.removePieceFrom(givenPosition);
 
         // then
-        List<List<MockBoardPiece>> pieces = board.getAllPieces();
-        MockBoardPiece piece = pieces.get(givenPosition.getMatrixRow()).get(givenPosition.getMatrixColumn());
+        List<List<DummyBoardPiece>> pieces = board.getAllPieces();
+        DummyBoardPiece piece = pieces.get(givenPosition.getMatrixRow()).get(givenPosition.getMatrixColumn());
         assertNull(piece, format("Matrix position supposed to be null on board, but was not %s.", piece));
     }
 
     @Test
     public void shouldReturnFalseOnCallingDoesExistsWhenPositionHasNegativeMatrixRow() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixRow(-1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixRow(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesExists(givenPosition);
@@ -309,8 +314,8 @@ public class BoardTest {
     @Test
     public void shouldReturnFalseOnCallingDoesExistsWhenPositionHasNegativeMatrixColumn() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixColumn(-1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixColumn(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesExists(givenPosition);
@@ -322,8 +327,8 @@ public class BoardTest {
     @Test
     public void shouldReturnFalseOnCallingDoesExistsWhenPositionHasMatrixRowGreaterThanTotalRows() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixRow(TOTAL_ROWS+1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixRow(TOTAL_ROWS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesExists(givenPosition);
@@ -335,8 +340,8 @@ public class BoardTest {
     @Test
     public void shouldReturnFalseOnCallingDoesExistsWhenPositionHasMatrixColumnGreaterThanTotalColumns() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixColumn(TOTAL_COLUMNS+1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixColumn(TOTAL_COLUMNS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesExists(givenPosition);
@@ -348,8 +353,8 @@ public class BoardTest {
     @Test
     public void shouldReturnTrueOnCallingDoesExistsWhenPositionIsAValidPosition() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesExists(givenPosition);
@@ -361,8 +366,8 @@ public class BoardTest {
     @Test
     public void shouldReturnFalseOnCallingDoesNotExistsWhenPositionIsAValidPosition() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesNotExists(givenPosition);
@@ -374,8 +379,8 @@ public class BoardTest {
     @Test
     public void shouldReturnTrueOnCallingDoesNotExistsWhenPositionHasNegativeMatrixRow() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixRow(-1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixRow(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesNotExists(givenPosition);
@@ -387,8 +392,8 @@ public class BoardTest {
     @Test
     public void shouldReturnTrueOnCallingDoesExistsWhenPositionHasNegativeMatrixColumn() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixColumn(-1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixColumn(-1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesNotExists(givenPosition);
@@ -400,8 +405,8 @@ public class BoardTest {
     @Test
     public void shouldReturnTrueOnCallingDoesExistsWhenPositionHasMatrixRowGreaterThanTotalRows() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixRow(TOTAL_ROWS+1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixRow(TOTAL_ROWS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesNotExists(givenPosition);
@@ -413,8 +418,8 @@ public class BoardTest {
     @Test
     public void shouldReturnTrueOnCallingDoesExistsWhenPositionHasMatrixColumnGreaterThanTotalColumns() {
         // given
-        StubMockBoardPosition givenPosition = MockBoardPosition.builder().filled().matrixColumn(TOTAL_COLUMNS+1).stub();
-        MockBoard board = MockBoard.builderMock().filled().build();
+        DummyBoardPosition givenPosition = DummyBoardPosition.builder().filled().matrixColumn(TOTAL_COLUMNS+1).build();
+        DummyBoard board = DummyBoard.dummyBuilder().filled().build();
 
         // when
         boolean resultExistence = board.doesNotExists(givenPosition);
