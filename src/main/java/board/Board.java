@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
     private final int totalRows;
@@ -24,7 +24,7 @@ public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B ext
         return boardPieces;
     }
 
-    protected List<P> getAllPlacedPieces() {
+    public List<P> getAllPlacedPieces() {
         return boardPieces.stream()
             .reduce(new ArrayList<>(), (accumulator, nullable) -> {
                 List<P> nonNullable = new ArrayList<>(nullable);
@@ -49,7 +49,8 @@ public class Board<T extends BoardPosition, P extends BoardPiece<T, P, B>, B ext
 
         boardPieces.get(position.getMatrixRow())
             .set(position.getMatrixColumn(), piece);
-        piece.placeOnPosition(position);
+
+        piece.placeOnPosition(position, (B) this);
     }
 
     public P removePieceFrom(T position) {

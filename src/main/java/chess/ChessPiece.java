@@ -2,33 +2,30 @@ package chess;
 
 import board.BoardPiece;
 import chess.pieces.King;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+@Getter
 @SuperBuilder
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;
-    private final ChessMatch match;
-    private boolean inCheck;
-    private boolean inCheckMate;
-    private int moveCount;
+    private ChessMatch match;
+    protected int moveCount;
+    protected boolean inCheck;
+    protected boolean inCheckMate;
+    protected List<ChessMovement> availableMovements;
 
-    protected ChessPiece(ChessBoard board, ChessMatch match, Color color) {
-        super(board);
-        this.match = match;
+    protected ChessPiece(Color color) {
+        super();
         this.color = color;
+        this.availableMovements = new ArrayList<>();
     }
 
-    public ChessMatch getMatch() {
-        return match;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    protected Color getOpponent() {
-        return Color.WHITE.equals(color) ? Color.BLACK : Color.WHITE;
+    protected void applyMatch() {
+        this.match = getBoard().getMatch();
     }
 
     public boolean isWhitePiece() {
@@ -43,60 +40,36 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return inCheck && !inCheckMate;
     }
 
-    public boolean isInCheckMate() {
-        return inCheckMate;
-    }
-
     public boolean isKing() {
         return this instanceof King;
     }
 
-    protected boolean isAllowedToTarget(ChessPosition position) {
-        if (doesNotExistsOnBoard(position))
-            return false;
-
-        if (thereIsNoPiecePlacedOn(position))
-            return true;
-
-        return thereIsAnOpponentPlacedOn(position);
+    public void clearAvailableMovements() {
+        availableMovements.clear();
     }
 
-    protected boolean thereIsNoPiecePlacedOn(ChessPosition position) {
-        return getBoardPiecePlacedOn(position) == null;
+    public void applyAvailableMovements(List<ChessMovement> availableMovements) {
+        this.availableMovements.addAll(availableMovements);
     }
 
-    protected boolean thereIsAnOpponentPlacedOn(ChessPosition position) {
-        ChessPiece chessPiece = getBoardPiecePlacedOn(position);
-        return isOpponentFrom(chessPiece);
+    public boolean isOpponentOf(ChessPiece chessPiece) {
+        return !isCompanionOf(chessPiece);
     }
 
-    protected boolean isOpponentFrom(ChessPiece chessPiece) {
-        return chessPiece != null && hasDifferentColorOf(chessPiece.getColor());
-    }
-
-    protected boolean hasDifferentColorOf(Color otherColor) {
-        return !hasSameColorOf(otherColor);
+    public boolean isCompanionOf(ChessPiece chessPiece) {
+        return chessPiece != null && hasSameColorOf(chessPiece.getColor());
     }
 
     protected boolean hasSameColorOf(Color otherColor) {
-        return color != null && color.equals(otherColor);
+        return color.equals(otherColor);
     }
 
-    public boolean canSaveKingFromCheck(King king) {
-        return getAllAvailableTargetPositions()
-            .stream()
-            .anyMatch(targetPosition -> {
-                boolean canSaveKing = false;
-                ChessPosition sourcePosition = getPosition();
-                ChessPiece captured = match.makeMove(sourcePosition, targetPosition);
+    public boolean isFromOpponentPlayer() {
+        return !isFromCurrentPlayer();
+    }
 
-                if (match.cannotDetectCheckScenario(king))
-                    canSaveKing = true;
-
-                match.undoMove(sourcePosition, targetPosition, captured);
-
-                return canSaveKing;
-            });
+    public boolean isFromCurrentPlayer() {
+        return color.equals(match.getCurrentPlayer());
     }
 
     public void informCheck() {
@@ -111,16 +84,16 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         inCheckMate = true;
     }
 
-    public int getMoveCount() {
-        return moveCount;
-    }
-
     public void increaseMoveCount() {
         moveCount++;
     }
 
     public void decreaseMoveCount() {
         moveCount--;
+    }
+
+    public boolean hasAlreadyMoved() {
+        return moveCount > 0;
     }
 
     public boolean hasNotMovedYet() {
@@ -133,4 +106,31 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
             && color.equals(((ChessPiece) any).getColor())
             && super.equals(any);
     }
+
+    public void setUpAvailableMovements() {
+        clearAvailableMovements();
+        applyAllAvailableMovements();
+    }
+
+    public abstract void applyAllAvailableMovements();
+
+    public boolean canBeTargetedBy(ChessPiece piece) {
+        return piece.canTargetThis(getPosition());
+    }
+
+    public boolean canNotTargetThis(ChessPosition position) {
+        return !canTargetThis(position);
+    }
+
+    public boolean canTargetThis(ChessPosition position) {
+        return getAvailableMovements().stream()
+            .map(ChessMovement::getTarget)
+            .anyMatch(position::equals);
+    }
+
+    public boolean hasNoAvailableMovements() {
+        return getAvailableMovements().isEmpty();
+    }
+
+    public abstract ChessPiece clonePiece(ChessBoard clonedBoard);
 }

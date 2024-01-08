@@ -8,7 +8,6 @@ public class DummyBoardPieceBuilder {
 
     private DummyBoard board;
     private DummyBoardPosition position;
-    private DummyBoardPosition availableTargetPosition;
 
     private DummyBoardPieceBuilder() {}
 
@@ -26,13 +25,8 @@ public class DummyBoardPieceBuilder {
         return this;
     }
 
-    public DummyBoardPieceBuilder availableTargetPosition(DummyBoardPosition position) {
-        this.availableTargetPosition = position;
-        return this;
-    }
-
     public DummyBoardPiece build() {
-        return new DummyBoardPiece(board, position, availableTargetPosition);
+        return new DummyBoardPiece(board, position);
     }
 
 }

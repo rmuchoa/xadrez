@@ -1,47 +1,38 @@
 package chess;
 
+import chess.movement.CastlingMovement;
 import chess.pieces.King;
 import java.util.List;
+import lombok.Getter;
 
 public class ChessMatch {
 
+    @Getter
     private int turn;
     private boolean inCheck;
+    @Getter
     private boolean inCheckMate;
+    @Getter
     private Color currentPlayer;
+    @Getter
     private final ChessBoard board;
 
-    public ChessMatch(ChessBoard board) {
-        this.board = board;
+    public ChessMatch() {
+        this.board = new ChessBoard(this);
         this.currentPlayer = Color.WHITE;
         this.turn = 1;
-    }
-
-    public int getTurn() {
-        return turn;
     }
 
     public boolean isInCheck() {
         return inCheck && !inCheckMate;
     }
 
-    public boolean isInCheckMate() {
-        return inCheckMate;
-    }
-
     public boolean isNotInCheckMate() {
         return !isInCheckMate();
     }
 
-    public Color getCurrentPlayer() {
-        return currentPlayer;
-    }
-
     public void placeNewPiece(char column, int row, ChessPiece piece) {
-        ChessPosition position = ChessPosition.builder()
-            .chessColumn(column)
-            .chessRow(row)
-            .build();
+        ChessPosition position = new ChessPosition(column, row);
 
         board.placePieceOn(position, piece);
     }
@@ -50,19 +41,23 @@ public class ChessMatch {
         return board.getAllPieces();
     }
 
-    public List<ChessPosition> getAllAvailableTargetFor(ChessPosition sourcePosition) {
+    public void setUpAvailableMovements() {
+        board.getAllPlacedPieces()
+            .forEach(ChessPiece::setUpAvailableMovements);
+    }
+
+    public List<ChessMovement> getAvailableMovementsFor(ChessPosition sourcePosition) {
         ChessPiece piece = board.getPiecePlacedOn(sourcePosition);
-        validateMovementOriginFrom(sourcePosition);
+        board.validateMovementOriginFrom(sourcePosition);
         
-        return piece.getAllAvailableTargetPositions();
+        return piece.getAvailableMovements();
     }
 
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
-        validateMovementOriginFrom(sourcePosition);
-        validateTargetPositionAvailability(sourcePosition, targetPosition);
+        ChessMovement movement = board.getMovementFor(sourcePosition, targetPosition);
 
-        ChessPiece capturedPiece = makeMove(sourcePosition, targetPosition);
-        testForCheckMovement(sourcePosition, targetPosition, capturedPiece);
+        ChessPiece capturedPiece = makeMovement(movement);
+        testForCheckMovement(movement, capturedPiece);
 
         if (!inCheckMate)
             nextTurn();
@@ -70,72 +65,62 @@ public class ChessMatch {
         return capturedPiece;
     }
 
-    public ChessPiece makeMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
-        ChessPiece movingPiece = board.removePieceFrom(sourcePosition);
-        ChessPiece capturedPiece = board.removePieceFrom(targetPosition);
+    public ChessPiece makeMovement(ChessMovement movement) {
+        ChessPiece movingPiece = board.removePieceFrom(movement.getSource());
+        ChessPiece capturedPiece = board.removePieceFrom(movement.getTarget());
 
-        board.placePieceOn(targetPosition, movingPiece);
+        board.placePieceOn(movement.getTarget(), movingPiece);
         movingPiece.increaseMoveCount();
 
-        applyRookCastling(movingPiece, sourcePosition, targetPosition);
+        applyRookCastling(movingPiece, movement);
+
+        board.getAllPlacedPieces()
+            .forEach(ChessPiece::setUpAvailableMovements);
 
         return capturedPiece;
     }
 
-    private void applyRookCastling(ChessPiece movingPiece, ChessPosition sourcePosition, ChessPosition targetPosition) {
-        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() + 2) {
-            ChessPosition towerPosition = movingPiece.getPosition().getNextBesideEastCastlingMovementPosition();
-            ChessPosition towerTargetPosition = movingPiece.getPosition().getNextBesideWestCastlingMovementPosition();
-            ChessPiece rook = board.removePieceFrom(towerPosition);
-            board.placePieceOn(towerTargetPosition, rook);
-            rook.increaseMoveCount();
-            return;
-        }
+    private void applyRookCastling(ChessPiece movingPiece, ChessMovement movement) {
+        if (movingPiece instanceof King && movement instanceof CastlingMovement kingMovement) {
 
-        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() - 2) {
-            ChessPosition towerPosition = movingPiece.getPosition().getTwoBesideWestCastlingMovementPosition();
-            ChessPosition towerTargetPosition = movingPiece.getPosition().getNextBesideEastCastlingMovementPosition();
-            ChessPiece rook = board.removePieceFrom(towerPosition);
-            board.placePieceOn(towerTargetPosition, rook);
+            ChessMovement rookMovement = kingMovement.getRookMovement();
+
+            ChessPiece rook = board.removePieceFrom(rookMovement.getSource());
+            board.placePieceOn(rookMovement.getTarget(), rook);
             rook.increaseMoveCount();
         }
     }
 
-    public void undoMove(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
-        ChessPiece movingPiece = board.removePieceFrom(targetPosition);
-        board.placePieceOn(sourcePosition, movingPiece);
+    public void undoMovement(ChessMovement movement, ChessPiece capturedPiece) {
+        ChessPiece movingPiece = board.removePieceFrom(movement.getTarget());
+        board.placePieceOn(movement.getSource(), movingPiece);
         movingPiece.decreaseMoveCount();
 
         if (capturedPiece != null)
-            board.placePieceOn(targetPosition, capturedPiece);
+            board.placePieceOn(movement.getTarget(), capturedPiece);
 
-        unapplyRookCastling(movingPiece, sourcePosition, targetPosition);
+        unapplyRookCastling(movingPiece, movement);
+
+        board.getAllPlacedPieces()
+            .forEach(ChessPiece::setUpAvailableMovements);
     }
 
-    private void unapplyRookCastling(ChessPiece movingPiece, ChessPosition sourcePosition, ChessPosition targetPosition) {
-        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() + 2) {
-            ChessPosition towerPosition = movingPiece.getPosition().getNextWestPosition();
-            ChessPosition towerTargetPosition = movingPiece.getPosition().getThreeBesideEastCastlingMovementPosition();
-            ChessPiece rook = board.removePieceFrom(towerPosition);
-            board.placePieceOn(towerTargetPosition, rook);
-            rook.increaseMoveCount();
-            return;
-        }
+    private void unapplyRookCastling(ChessPiece movingPiece, ChessMovement movement) {
+        if (movingPiece instanceof King && movement instanceof CastlingMovement kingMovement) {
 
-        if (movingPiece instanceof King && targetPosition.getChessColumn() == sourcePosition.getChessColumn() - 2) {
-            ChessPosition towerPosition = movingPiece.getPosition().getNextWestPosition();
-            ChessPosition towerTargetPosition = movingPiece.getPosition().getFourBesideWestCastlingMovementPosition();
-            ChessPiece rook = board.removePieceFrom(towerPosition);
-            board.placePieceOn(towerTargetPosition, rook);
+            ChessMovement rookMovement = kingMovement.getRookMovement();
+
+            ChessPiece rook = board.removePieceFrom(rookMovement.getTarget());
+            board.placePieceOn(rookMovement.getSource(), rook);
             rook.increaseMoveCount();
         }
     }
 
-    private void testForCheckMovement(ChessPosition sourcePosition, ChessPosition targetPosition, ChessPiece capturedPiece) {
+    private void testForCheckMovement(ChessMovement movement, ChessPiece capturedPiece) {
         try {
             testForOwnKingInCheck();
         } catch (ChessException ex) {
-            undoMove(sourcePosition, targetPosition, capturedPiece);
+            undoMovement(movement, capturedPiece);
             throw ex;
         }
 
@@ -144,7 +129,7 @@ public class ChessMatch {
     }
 
     private void testForOwnKingInCheck() {
-        King ownKing = board.getKingOf(currentPlayer);
+        King ownKing = getCurrentKing();
 
         if (canDetectCheckScenario(ownKing))
             throw new ChessException("This movement put your own king in check. Undoing all movement!");
@@ -153,7 +138,7 @@ public class ChessMatch {
     }
 
     private void testForOpponentKingInCheck() {
-        King opponentKing = board.getOpponentKingFrom(currentPlayer);
+        King opponentKing = getOpponentKing();
 
         inCheck = canDetectCheckScenario(opponentKing);
 
@@ -165,10 +150,12 @@ public class ChessMatch {
         if (!inCheck)
             return;
 
-        King opponentKing = board.getOpponentKingFrom(currentPlayer);
-        inCheckMate = board.getAllPlacedPiecesOf(opponentKing.getColor())
+        King opponentKing = getOpponentKing();
+
+        inCheckMate = board.getAllPlacedPieces()
             .stream()
-            .noneMatch(piece -> piece.canSaveKingFromCheck(opponentKing));
+            .filter(opponentKing::isCompanionOf)
+            .noneMatch(opponentKing::canBeSavedDuringCheckBy);
 
         if (inCheckMate)
             opponentKing.informCheckMate();
@@ -179,9 +166,30 @@ public class ChessMatch {
     }
 
     private boolean canDetectCheckScenario(King king) {
-        return board.getAllPlacedPiecesOf(king.getOpponent())
+        return board.getAllPlacedPieces()
             .stream()
-            .anyMatch(piece -> piece.canTargetThis(king.getPosition()));
+            .filter(king::isOpponentOf)
+            .anyMatch(king::canBeTargetedBy);
+    }
+
+    public King getOpponentKing() {
+        return board.getAllPlacedPieces()
+            .stream()
+            .filter(ChessPiece::isKing)
+            .map(piece -> (King) piece)
+            .filter(King::isFromOpponentPlayer)
+            .findAny()
+            .orElse(null);
+    }
+
+    public King getCurrentKing() {
+        return board.getAllPlacedPieces()
+            .stream()
+            .filter(ChessPiece::isKing)
+            .map(piece -> (King) piece)
+            .filter(King::isFromCurrentPlayer)
+            .findAny()
+            .orElse(null);
     }
 
     private void nextTurn() {
@@ -189,36 +197,13 @@ public class ChessMatch {
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
-    private void validateMovementOriginFrom(ChessPosition sourcePosition) {
-        validatePiecePresenceOn(sourcePosition);
-        validateCurrentPlayerPiece(sourcePosition);
-        validatePieceMobility(sourcePosition);
+    public ChessMatch cloneMatch() {
+        ChessMatch clonedMatch = new ChessMatch();
+        clonedMatch.turn = getTurn();
+        clonedMatch.inCheck = isInCheck();
+        clonedMatch.inCheckMate = isInCheckMate();
+        clonedMatch.currentPlayer = getCurrentPlayer();
+        getBoard().cloneIntoBoard(clonedMatch.getBoard());
+        return clonedMatch;
     }
-
-    private void validatePieceMobility(ChessPosition sourcePosition) {
-        ChessPiece piece = board.getPiecePlacedOn(sourcePosition);
-
-        if (piece.hasNoAvailableMovements())
-            throw new ChessException("There is no possible movements for the chosen " + piece + " piece");
-    }
-
-    private void validateCurrentPlayerPiece(ChessPosition sourcePosition) {
-        ChessPiece piece = board.getPiecePlacedOn(sourcePosition);
-
-        if (piece.hasDifferentColorOf(currentPlayer))
-            throw new ChessException("The chosen piece "+piece+" on "+sourcePosition+" is not yours");
-    }
-
-    private void validatePiecePresenceOn(ChessPosition sourcePosition) {
-        if (board.isBoardPositionEmpty(sourcePosition))
-            throw new ChessException("There is no piece present on source position " + sourcePosition);
-    }
-
-    private void validateTargetPositionAvailability(ChessPosition sourcePosition, ChessPosition targetPosition) {
-        ChessPiece piece = board.getPiecePlacedOn(sourcePosition);
-
-        if (piece.canNotTargetThis(targetPosition))
-            throw new ChessException("The piece cannot move to target position " + targetPosition);
-    }
-
 }

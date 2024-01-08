@@ -14,8 +14,8 @@ public class Empty extends ChessPiece {
 
     private static final Color NO_COLOR = null;
 
-    public Empty(ChessBoard board, ChessMatch match) {
-        super(board, match, NO_COLOR);
+    public Empty() {
+        super(NO_COLOR);
     }
 
     public List<ChessPosition> getAllAvailableTargetPositions() {
@@ -25,6 +25,14 @@ public class Empty extends ChessPiece {
     @Override
     public String toString() {
         return "-";
+    }
+
+    @Override
+    public void applyAllAvailableMovements() {}
+
+    @Override
+    public ChessPiece clonePiece(ChessBoard clonedBoard) {
+        return new Empty();
     }
 
 }

@@ -3,6 +3,7 @@ package game;
 import static chess.ChessBoard.CHESS_BOARD_SIZE;
 
 import chess.ChessMatch;
+import chess.ChessMovement;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -39,8 +40,8 @@ public class UI {
         printMatch(match, capturedPieces, null);
     }
 
-    public static void printMatch(ChessMatch match, List<ChessPiece> capturedPieces, List<ChessPosition> possibleMovements) {
-        printBoard(match.getPieces(), possibleMovements);
+    public static void printMatch(ChessMatch match, List<ChessPiece> capturedPieces, List<ChessMovement> availableMovements) {
+        printBoard(match, availableMovements);
         System.out.println();
         printCapturedPieces(capturedPieces);
         System.out.println();
@@ -57,9 +58,9 @@ public class UI {
         }
     }
 
-    public static void printBoard(List<List<ChessPiece>> pieces, List<ChessPosition> possibleMovements) {
-        for (int row=0; row < pieces.size(); row++)
-            printBoardRow(row, pieces, possibleMovements);
+    public static void printBoard(ChessMatch match, List<ChessMovement> availableMovements) {
+        for (int row=0; row < match.getPieces().size(); row++)
+            printBoardRow(row, match, availableMovements);
 
         printColumnLabels();
     }
@@ -70,7 +71,7 @@ public class UI {
             char chessPositionColumn = coordinate.charAt(0);
             int chessPositionRow = Integer.parseInt(coordinate.substring(1));
 
-            return ChessPosition.builder().chessColumn(chessPositionColumn).chessRow(chessPositionRow).build();
+            return new ChessPosition(chessPositionColumn, chessPositionRow);
 
         } catch (RuntimeException ex) {
             throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
@@ -87,23 +88,23 @@ public class UI {
         System.out.println("   a  b  c  d  e  f  g  h  ");
     }
 
-    private static void printBoardRow(int row, List<List<ChessPiece>> pieces, List<ChessPosition> possibleMovements) {
+    private static void printBoardRow(int row, ChessMatch match, List<ChessMovement> availableMovements) {
         printRowLabel(row);
 
-        for(int column=0; column< pieces.size(); column++) {
-            ChessPiece piece = getPieceFrom(pieces, row, column);
-            printPiece(piece, possibleMovements);
+        for(int column=0; column< match.getPieces().size(); column++) {
+            ChessPiece piece = getPieceFrom(match, row, column);
+            printPiece(piece, availableMovements);
         }
 
         System.out.println();
     }
 
-    private static ChessPiece getPieceFrom(List<List<ChessPiece>> pieces, int row, int column) {
-        ChessPiece piece = pieces.get(row).get(column);
+    private static ChessPiece getPieceFrom(ChessMatch match, int row, int column) {
+        ChessPiece piece = match.getPieces().get(row).get(column);
 
         if (piece == null) {
-            piece = Empty.builder().build();
-            piece.placeOnPosition(ChessPosition.builder().boardPostion(row, column).build());
+            piece = new Empty();
+            piece.placeOnPosition(new ChessPosition(row, column), match.getBoard());
         }
 
         return piece;
@@ -113,11 +114,12 @@ public class UI {
         System.out.print((CHESS_BOARD_SIZE - row) + "  ");
     }
 
-    public static void printPiece(ChessPiece piece, List<ChessPosition> possibleMovements) {
-        if (possibleMovements != null) {
+    public static void printPiece(ChessPiece piece, List<ChessMovement> availableMovements) {
+        if (availableMovements != null) {
             ChessPosition chessPosition = piece.getPosition();
 
-            printPiece(piece, possibleMovements.stream()
+            printPiece(piece, availableMovements.stream()
+                .map(ChessMovement::getTarget)
                 .anyMatch(chessPosition::equals));
         } else {
             printPiece(piece, false);
@@ -159,12 +161,12 @@ public class UI {
             .toList();
 
         System.out.println("Captured pieces:");
-        System.out.print("White: ");
         System.out.print(ANSI_WHITE);
+        System.out.print("White: ");
         System.out.println(Arrays.toString(whiteCaptured.toArray()));
         System.out.print(ANSI_RESET);
-        System.out.print("Black: ");
         System.out.print(ANSI_GREEN);
+        System.out.print("Black: ");
         System.out.println(Arrays.toString(blackCaptured.toArray()));
         System.out.print(ANSI_RESET);
     }

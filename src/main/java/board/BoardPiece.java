@@ -1,29 +1,24 @@
 package board;
 
-import java.util.List;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+@Getter
 @SuperBuilder
 public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
-    private final B board;
     private T position;
+    private B board;
 
-    protected BoardPiece(B board) {
-        this.board = board;
-    }
+    protected BoardPiece() {}
 
-    protected B getBoard() {
-        return board;
-    }
-
-    public T getPosition() {
-        return position;
-    }
-
-    public void placeOnPosition(T position) {
+    public void placeOnPosition(T position, B board) {
         this.position = position;
+        this.board = board;
+        applyMatch();
     }
+
+    protected abstract void applyMatch();
 
     public void takeOutOfPosition() {
         position = null;
@@ -39,21 +34,6 @@ public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<
 
     protected boolean doesNotExistsOnBoard(T position) {
         return board.doesNotExists(position);
-    }
-
-    public abstract List<T> getAllAvailableTargetPositions();
-
-    public boolean canNotTargetThis(T position) {
-        return !canTargetThis(position);
-    }
-
-    public boolean canTargetThis(T position) {
-        return getAllAvailableTargetPositions().stream()
-            .anyMatch(position::equals);
-    }
-
-    public boolean hasNoAvailableMovements() {
-        return getAllAvailableTargetPositions().isEmpty();
     }
 
     @Override

@@ -3,289 +3,97 @@ package chess;
 import static chess.ChessBoard.CHESS_BOARD_SIZE;
 
 import board.BoardPosition;
+import lombok.Getter;
 
+@Getter
 public class ChessPosition extends BoardPosition {
 
     private final char chessColumn;
     private final int chessRow;
-    private final MovementType movement;
+
+    public ChessPosition(int row, int column) {
+        this(toChessColumn(column), toChessRow(row));
+    }
 
     public ChessPosition(char chessColumn, int chessRow) {
-        this(chessColumn, chessRow, null);
-    }
-    
-    public ChessPosition(char chessColumn, int chessRow, MovementType movement) {
         super(toBoardMatrixRow(chessRow), toBoardMatrixColumn(chessColumn));
 
         validateChessPositionCoordinate(chessColumn, chessRow);
 
         this.chessColumn = chessColumn;
         this.chessRow = chessRow;
-        this.movement = movement;
     }
 
-    public char getChessColumn() {
+    public static ChessPosition buildPositionFor(char otherColumn, int otherRow) {
+        return new ChessPosition(otherColumn, otherRow);
+    }
+
+    public char getSameChessColumn() {
         return chessColumn;
     }
 
-    public int getChessRow() {
-        return chessRow;
-    }
-
-    public MovementType getMovement() {
-        return movement;
-    }
-
-    public ChessPosition getNextNorthPosition() {
-        return builder()
-            .chessColumn(getSameChessColumn())
-            .chessRow(getNextNorthChessRow())
-            .lineMovement()
-            .build();
-    }
-
-    public ChessPosition getNextSouthPosition() {
-        return builder()
-            .chessColumn(getSameChessColumn())
-            .chessRow(getNextSouthChessRow())
-            .lineMovement()
-            .build();
-    }
-
-    public ChessPosition getNextEastPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getSameChessRow())
-            .lineMovement()
-            .build();
-    }
-
-    public ChessPosition getNextWestPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getSameChessRow())
-            .lineMovement()
-            .build();
-    }
-
-    public ChessPosition getNextNorthEastPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getNextNorthChessRow())
-            .diagonalMovement()
-            .build();
-    }
-
-    public ChessPosition getNextNorthWestPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getNextNorthChessRow())
-            .diagonalMovement()
-            .build();
-    }
-
-    public ChessPosition getNextSouthEastPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getNextSouthChessRow())
-            .diagonalMovement()
-            .build();
-    }
-
-    public ChessPosition getNextSouthWestPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getNextSouthChessRow())
-            .diagonalMovement()
-            .build();
-    }
-
-    public ChessPosition getSuperiorNorthEastElMovementPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getTwoAheadNorthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getSuperiorNorthWestElMovementPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getTwoAheadNorthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getInferiorNorthEastElMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideEastChessColumn())
-            .chessRow(getNextNorthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getInferiorNorthWestElMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideWestChessColumn())
-            .chessRow(getNextNorthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getSuperiorSouthEastElMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideEastChessColumn())
-            .chessRow(getNextSouthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getSuperiorSouthWestElMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideWestChessColumn())
-            .chessRow(getNextSouthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getInferiorSouthEastElMovementPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getTwoBehindSouthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getInferiorSouthWestElMovementPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getTwoBehindSouthChessRow())
-            .elMovement()
-            .build();
-    }
-
-    public ChessPosition getNextBesideEastCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getNextEastChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getNextBesideWestCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getNextWestChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getTwoBesideEastCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideEastChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getTwoBesideWestCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getTwoBesideWestChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getThreeBesideEastCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getThreeBesideEastChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getThreeBesideWestCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getThreeBesideWestChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    public ChessPosition getFourBesideWestCastlingMovementPosition() {
-        return builder()
-            .chessColumn(getFourBesideWestChessColumn())
-            .chessRow(getSameChessRow())
-            .castlingMovement()
-            .build();
-    }
-
-    private char getSameChessColumn() {
-        return chessColumn;
-    }
-
-    private char getNextEastChessColumn() {
+    public char getNextEastChessColumn() {
         char column = chessColumn;
         return ++column;
     }
 
-    private char getNextWestChessColumn() {
+    public char getNextWestChessColumn() {
         char column = chessColumn;
         return --column;
     }
 
-    private char getTwoBesideEastChessColumn() {
+    public char getTwoBesideEastChessColumn() {
         char column = chessColumn;
         column += 2;
 
         return column;
     }
 
-    private char getTwoBesideWestChessColumn() {
+    public char getTwoBesideWestChessColumn() {
         char column = chessColumn;
         column -= 2;
 
         return column;
     }
 
-    private char getThreeBesideEastChessColumn() {
+    public char getThreeBesideEastChessColumn() {
         char column = chessColumn;
         column += 3;
 
         return column;
     }
 
-    private char getThreeBesideWestChessColumn() {
+    public char getThreeBesideWestChessColumn() {
         char column = chessColumn;
         column -= 3;
 
         return column;
     }
 
-    private char getFourBesideWestChessColumn() {
+    public char getFourBesideWestChessColumn() {
         char column = chessColumn;
         column -= 4;
 
         return column;
     }
 
-    private int getSameChessRow() {
+    public int getSameChessRow() {
         return chessRow;
     }
 
-    private int getNextNorthChessRow() {
+    public int getNextNorthChessRow() {
         return chessRow + 1;
     }
 
-    private int getNextSouthChessRow() {
+    public int getNextSouthChessRow() {
         return chessRow - 1;
     }
 
-    private int getTwoAheadNorthChessRow() {
+    public int getTwoAheadNorthChessRow() {
         return chessRow + 2;
     }
 
-    private int getTwoBehindSouthChessRow() {
+    public int getTwoBehindSouthChessRow() {
         return chessRow - 2;
     }
 
@@ -314,6 +122,14 @@ public class ChessPosition extends BoardPosition {
         return chessColumn - 'a';
     }
 
+    private static int toChessRow(int matrixRow) {
+        return CHESS_BOARD_SIZE - matrixRow;
+    }
+
+    private static char toChessColumn(int matrixColumn) {
+        return (char) ('a' + matrixColumn);
+    }
+
     private static void validateChessPositionCoordinate(char chessColumn, int chessRow) {
         if (isNotAValidChessPositionCoordinate(chessColumn, chessRow))
             throw new ChessException("Error instantiating ChessPosition "+chessColumn+chessRow+". Valid values are from a1 to h8.");
@@ -332,72 +148,8 @@ public class ChessPosition extends BoardPosition {
         return chessRow < 1 || chessRow > CHESS_BOARD_SIZE;
     }
 
-    public static ChessPositionBuilder builder() {
-        return ChessPositionBuilder.builder();
-    }
-
-    public enum MovementType {
-
-        LINE,
-        DIAGONAL,
-        CASTLING,
-        EL
-
-    }
-
-    public static class ChessPositionBuilder {
-
-        private char chessColumn;
-        private int chessRow;
-        private MovementType movement;
-
-        private ChessPositionBuilder() {}
-
-        public static ChessPositionBuilder builder() {
-            return new ChessPositionBuilder();
-        }
-
-        public ChessPositionBuilder chessColumn(char chessColumn) {
-            this.chessColumn = chessColumn;
-            return this;
-        }
-
-        public ChessPositionBuilder chessRow(int chessRow) {
-            this.chessRow = chessRow;
-            return this;
-        }
-
-        public ChessPositionBuilder movement(MovementType movement) {
-            this.movement = movement;
-            return this;
-        }
-
-        public ChessPositionBuilder lineMovement() {
-            return movement(MovementType.LINE);
-        }
-
-        public ChessPositionBuilder diagonalMovement() {
-            return movement(MovementType.DIAGONAL);
-        }
-
-        public ChessPositionBuilder elMovement() {
-            return movement(MovementType.EL);
-        }
-
-        public ChessPositionBuilder castlingMovement() {
-            return movement(MovementType.CASTLING);
-        }
-
-        public ChessPositionBuilder boardPostion(int row, int column) {
-            this.chessColumn = (char) ('a' + column);
-            this.chessRow = CHESS_BOARD_SIZE - row;
-            return this;
-        }
-
-        public ChessPosition build() {
-            return new ChessPosition(chessColumn, chessRow, movement);
-        }
-
+    public ChessPosition clonePosition() {
+        return new ChessPosition(getChessColumn(), getChessRow());
     }
 
 }

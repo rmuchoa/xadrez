@@ -1,128 +1,50 @@
 package chess.pieces;
 
+import static chess.movement.types.MovementDirection.NORTHEAST;
+import static chess.movement.types.MovementDirection.NORTHWEST;
+import static chess.movement.types.MovementDirection.SOUTHEAST;
+import static chess.movement.types.MovementDirection.SOUTHWEST;
+
 import chess.ChessBoard;
-import chess.ChessException;
-import chess.ChessMatch;
+import chess.ChessMovement;
 import chess.ChessPiece;
-import chess.ChessPosition;
 import chess.Color;
-import java.util.ArrayList;
-import java.util.List;
+import chess.movement.DiagonalMovement;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 public class Bishop extends ChessPiece {
 
-    private Bishop(ChessBoard board, ChessMatch match, Color color) {
-        super(board, match, color);
+    public Bishop(Color color) {
+        super(color);
     }
 
     @Override
-    public List<ChessPosition> getAllAvailableTargetPositions() {
-        List<ChessPosition> possibleMovements = new ArrayList<>();
+    public void applyAllAvailableMovements() {
 
-        possibleMovements.addAll(getAllAvailableNorthEastPositions());
-        possibleMovements.addAll(getAllAvailableNorthWestPositions());
-        possibleMovements.addAll(getAllAvailableSouthEastPositions());
-        possibleMovements.addAll(getAllAvailableSouthWestPositions());
+        Bishop bishop = this;
 
-        return possibleMovements;
+        applyAvailableMovements(DiagonalMovement.checkMovements(bishop, NORTHEAST));
+        applyAvailableMovements(DiagonalMovement.checkMovements(bishop, NORTHWEST));
+        applyAvailableMovements(DiagonalMovement.checkMovements(bishop, SOUTHEAST));
+        applyAvailableMovements(DiagonalMovement.checkMovements(bishop, SOUTHWEST));
+
     }
 
-    private List<ChessPosition> getAllAvailableNorthEastPositions() {
-        List<ChessPosition> northEastMovements = new ArrayList<>();
+    @Override
+    public ChessPiece clonePiece(ChessBoard clonedBoard) {
+        Bishop clonedBishop = new Bishop(getColor());
+        clonedBishop.moveCount = getMoveCount();
+        clonedBishop.inCheck = isInCheck();
+        clonedBishop.inCheckMate = isInCheckMate();
+        clonedBishop.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
-        try {
-            appendNextAvailableNorthEastPosition(northEastMovements, getPosition());
-
-        } catch (ChessException ignored) {}
-
-        return northEastMovements;
-    }
-
-    private void appendNextAvailableNorthEastPosition(List<ChessPosition> northEastMovements, ChessPosition position) {
-        ChessPosition northEastPosition = position.getNextNorthEastPosition();
-
-        if (isAllowedToTarget(northEastPosition)) {
-            northEastMovements.add(northEastPosition);
-
-            if (thereIsAnOpponentPlacedOn(northEastPosition))
-                return;
-
-            appendNextAvailableNorthEastPosition(northEastMovements, northEastPosition);
+        for (int i = 0; i < availableMovements.size(); i++) {
+            ChessMovement movement = availableMovements.get(i);
+            clonedBishop.availableMovements.add(movement.cloneMovement(clonedBishop));
         }
-    }
 
-    private List<ChessPosition> getAllAvailableNorthWestPositions() {
-        List<ChessPosition> northWeastMovements = new ArrayList<>();
-
-        try {
-            appendNextAvailableNorthWestPosition(northWeastMovements, getPosition());
-
-        } catch (ChessException ignored) {}
-
-        return northWeastMovements;
-    }
-
-    private void appendNextAvailableNorthWestPosition(List<ChessPosition> northWestMovements, ChessPosition position) {
-        ChessPosition northWestPosition = position.getNextNorthWestPosition();
-
-        if (isAllowedToTarget(northWestPosition)) {
-            northWestMovements.add(northWestPosition);
-
-            if (thereIsAnOpponentPlacedOn(northWestPosition))
-                return;
-
-            appendNextAvailableNorthWestPosition(northWestMovements, northWestPosition);
-        }
-    }
-
-    private List<ChessPosition> getAllAvailableSouthEastPositions() {
-        List<ChessPosition> southEastMovements = new ArrayList<>();
-
-        try {
-            appendNextAvailableSouthEastPosition(southEastMovements, getPosition());
-
-        } catch (ChessException ignored) {}
-
-        return southEastMovements;
-    }
-
-    private void appendNextAvailableSouthEastPosition(List<ChessPosition> southEastMovements, ChessPosition position) {
-        ChessPosition southEastPosition = position.getNextSouthEastPosition();
-
-        if (isAllowedToTarget(southEastPosition)) {
-            southEastMovements.add(southEastPosition);
-
-            if (thereIsAnOpponentPlacedOn(southEastPosition))
-                return;
-
-            appendNextAvailableSouthEastPosition(southEastMovements, southEastPosition);
-        }
-    }
-
-    private List<ChessPosition> getAllAvailableSouthWestPositions() {
-        List<ChessPosition> southWestMovements = new ArrayList<>();
-
-        try {
-            appendNextAvailableSouthWestPosition(southWestMovements, getPosition());
-
-        } catch (ChessException ignored) {}
-
-        return southWestMovements;
-    }
-
-    private void appendNextAvailableSouthWestPosition(List<ChessPosition> southWestMovements, ChessPosition position) {
-        ChessPosition southWestPosition = position.getNextSouthWestPosition();
-
-        if (isAllowedToTarget(southWestPosition)) {
-            southWestMovements.add(southWestPosition);
-
-            if (thereIsAnOpponentPlacedOn(southWestPosition))
-                return;
-
-            appendNextAvailableSouthWestPosition(southWestMovements, southWestPosition);
-        }
+        return clonedBishop;
     }
 
     @Override
