@@ -10,9 +10,7 @@ import chess.ChessMovement;
 import chess.ChessPiece;
 import chess.Color;
 import chess.movement.LineMovement;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 public class Rook extends ChessPiece {
 
     public Rook(Color color) {

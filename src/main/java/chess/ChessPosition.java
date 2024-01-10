@@ -104,8 +104,8 @@ public class ChessPosition extends BoardPosition {
 
     @Override
     public boolean equals(Object any) {
-        return any instanceof ChessPosition &&
-            equalsPosition((ChessPosition) any);
+        return any instanceof ChessPosition position
+            && equalsPosition(position);
     }
 
     private boolean equalsPosition(ChessPosition position) {

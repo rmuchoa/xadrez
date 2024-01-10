@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
 
     private final Color color;

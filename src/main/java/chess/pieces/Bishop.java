@@ -10,9 +10,7 @@ import chess.ChessMovement;
 import chess.ChessPiece;
 import chess.Color;
 import chess.movement.DiagonalMovement;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 public class Bishop extends ChessPiece {
 
     public Bishop(Color color) {

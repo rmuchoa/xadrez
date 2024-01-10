@@ -1,10 +1,8 @@
 package board;
 
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
 public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<T, P, B>, B extends Board<T, P, B>> {
 
     private T position;
@@ -38,8 +36,8 @@ public abstract class BoardPiece <T extends BoardPosition, P extends BoardPiece<
 
     @Override
     public boolean equals(Object any) {
-        return any instanceof BoardPiece
-            && position.equals(((BoardPiece<?, ?, ?>) any).getPosition());
+        return any instanceof BoardPiece piece
+            && position.equals(piece.getPosition());
     }
 
     @Override

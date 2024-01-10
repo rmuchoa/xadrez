@@ -10,9 +10,7 @@ import chess.ChessMovement;
 import chess.ChessPiece;
 import chess.Color;
 import chess.movement.KnightElMovement;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 public class Knight extends ChessPiece {
 
     public Knight(Color color) {

@@ -2,10 +2,8 @@ package chess;
 
 import board.Board;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder(toBuilder = true)
 public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
 
     private final ChessMatch match;

@@ -11,9 +11,7 @@ import chess.ChessPiece;
 import chess.Color;
 import chess.movement.PawnTakeMovement;
 import chess.movement.PawnWalkMovement;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 public class Pawn extends ChessPiece {
 
     public Pawn(Color color) {

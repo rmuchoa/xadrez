@@ -17,9 +17,7 @@ import chess.Color;
 import chess.movement.CastlingMovement;
 import chess.movement.DiagonalMovement;
 import chess.movement.LineMovement;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 public class King extends ChessPiece {
 
     public King(Color color) {

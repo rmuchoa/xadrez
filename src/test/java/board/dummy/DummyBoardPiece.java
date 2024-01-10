@@ -22,8 +22,8 @@ public class DummyBoardPiece extends BoardPiece<DummyBoardPosition, DummyBoardPi
 
     @Override
     public boolean equals(Object any) {
-        return any instanceof DummyBoardPiece
-            && super.equals(any);
+        return any instanceof DummyBoardPiece dummy
+            && super.equals(dummy);
     }
 
     public static DummyBoardPieceBuilder builder() {

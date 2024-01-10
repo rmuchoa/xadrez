@@ -1,5 +1,8 @@
 package board;
 
+import lombok.Getter;
+
+@Getter
 public class BoardPosition {
 
     private final int matrixRow;
@@ -10,14 +13,6 @@ public class BoardPosition {
         this.matrixColumn = matrixColumn;
     }
 
-    public int getMatrixRow() {
-        return matrixRow;
-    }
-
-    public int getMatrixColumn() {
-        return matrixColumn;
-    }
-
     @Override
     public String toString() {
         return "board[" + matrixRow + "][" + matrixColumn + "]";
@@ -25,8 +20,8 @@ public class BoardPosition {
 
     @Override
     public boolean equals(Object any) {
-        return any instanceof BoardPosition
-            && equalsPosition((BoardPosition) any);
+        return any instanceof BoardPosition position
+            && equalsPosition(position);
     }
 
     private boolean equalsPosition(BoardPosition position) {
