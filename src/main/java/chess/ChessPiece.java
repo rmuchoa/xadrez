@@ -5,7 +5,6 @@ import chess.pieces.King;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, ChessBoard> {
@@ -27,6 +26,14 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         this.match = getBoard().getMatch();
     }
 
+    public void clearAvailableMovements() {
+        availableMovements.clear();
+    }
+
+    public void applyAvailableMovements(List<ChessMovement> availableMovements) {
+        this.availableMovements.addAll(availableMovements);
+    }
+
     public boolean isWhitePiece() {
         return Color.WHITE.equals(color);
     }
@@ -43,20 +50,16 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return this instanceof King;
     }
 
-    public void clearAvailableMovements() {
-        availableMovements.clear();
-    }
-
-    public void applyAvailableMovements(List<ChessMovement> availableMovements) {
-        this.availableMovements.addAll(availableMovements);
-    }
-
     public boolean isOpponentOf(ChessPiece chessPiece) {
-        return !isCompanionOf(chessPiece);
+        return chessPiece != null && hasDifferentColorOf(chessPiece.getColor());
     }
 
     public boolean isCompanionOf(ChessPiece chessPiece) {
         return chessPiece != null && hasSameColorOf(chessPiece.getColor());
+    }
+
+    protected boolean hasDifferentColorOf(Color otherColor) {
+        return !hasSameColorOf(otherColor);
     }
 
     protected boolean hasSameColorOf(Color otherColor) {
@@ -69,18 +72,6 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
 
     public boolean isFromCurrentPlayer() {
         return color.equals(match.getCurrentPlayer());
-    }
-
-    public void informCheck() {
-        inCheck = true;
-    }
-
-    public void revokeCheck() {
-        inCheck = false;
-    }
-    
-    public void informCheckMate() {
-        inCheckMate = true;
     }
 
     public void increaseMoveCount() {
@@ -97,6 +88,18 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
 
     public boolean hasNotMovedYet() {
         return moveCount == 0;
+    }
+
+    public void informCheck() {
+        inCheck = true;
+    }
+
+    public void revokeCheck() {
+        inCheck = false;
+    }
+
+    public void informCheckMate() {
+        inCheckMate = true;
     }
 
     @Override

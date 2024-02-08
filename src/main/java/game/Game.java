@@ -1,6 +1,5 @@
 package game;
 
-import chess.ChessBoard;
 import chess.ChessMatch;
 import chess.ChessMovement;
 import chess.ChessPiece;

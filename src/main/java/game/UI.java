@@ -42,20 +42,47 @@ public class UI {
 
     public static void printMatch(ChessMatch match, List<ChessPiece> capturedPieces, List<ChessMovement> availableMovements) {
         printBoard(match, availableMovements);
-        System.out.println();
         printCapturedPieces(capturedPieces);
-        System.out.println();
-        System.out.println("Turn: " + match.getTurn());
 
         if (match.isNotInCheckMate()) {
-            System.out.println("Waiting player: " + match.getCurrentPlayer());
-
-            if (match.isInCheck())
-                System.out.println("CHECK!");
+            printPlay(match);
         } else {
-            System.out.println("CHECKMATE!!!");
-            System.out.println("Winner: "+match.getCurrentPlayer());
+            printCheckMate(match);
         }
+    }
+
+    private static void printPlay(ChessMatch match) {
+        System.out.print("Current player: ");
+        printCurrentPlayer(match);
+        printMatchTurn(match);
+
+        printCheck(match);
+    }
+
+    private static void printCheckMate(ChessMatch match) {
+        System.out.println("CHECKMATE!!!");
+        printWinner(match);
+        printMatchTurn(match);
+    }
+
+    private static void printMatchTurn(ChessMatch match) {
+        System.out.println("Turn: " + match.getTurn());
+    }
+
+    private static void printWinner(ChessMatch match) {
+        System.out.print("Winner: ");
+        printCurrentPlayer(match);
+    }
+
+    private static void printCurrentPlayer(ChessMatch match) {
+        changeToColor(match.getCurrentPlayer());
+        System.out.println(match.getCurrentPlayer());
+        resetColor();
+    }
+
+    private static void printCheck(ChessMatch match) {
+        if (match.isInCheck())
+            System.out.println("CHECK!");
     }
 
     public static void printBoard(ChessMatch match, List<ChessMovement> availableMovements) {
@@ -63,6 +90,7 @@ public class UI {
             printBoardRow(row, match, availableMovements);
 
         printColumnLabels();
+        System.out.println();
     }
 
     public static ChessPosition readChessPosition(Scanner sc) {
@@ -121,6 +149,7 @@ public class UI {
             printPiece(piece, availableMovements.stream()
                 .map(ChessMovement::getTarget)
                 .anyMatch(chessPosition::equals));
+
         } else {
             printPiece(piece, false);
         }
@@ -128,46 +157,95 @@ public class UI {
 
     public static void printPiece(ChessPiece piece, boolean background) {
         if (piece.isInCheck())
-            System.out.print(ANSI_YELLOW_BACKGROUND);
+            changeToYellowBackground();
 
         if (piece.isInCheckMate())
-            System.out.print(ANSI_RED_BACKGROUND);
+            changeToRedBackground();
 
         if (background)
-            System.out.print(ANSI_BLUE_BACKGROUND);
+            changeToBlueBackground();
 
-        if (piece instanceof Empty)
-            System.out.print(piece+ANSI_RESET);
-        else
+        if (piece instanceof Empty) {
+            printEmptyPiece(piece);
+        } else {
             printColoredPiece(piece);
+        }
 
         System.out.print("  ");
     }
 
+    private static void printEmptyPiece(ChessPiece piece) {
+        System.out.print(piece);
+        resetColor();
+    }
+
     private static void printColoredPiece(ChessPiece piece) {
-        if (piece.getColor() == Color.WHITE)
-            System.out.print(ANSI_WHITE + piece + ANSI_RESET);
-        else
-            System.out.print(ANSI_GREEN + piece + ANSI_RESET);
+        changeToColor(piece.getColor());
+        System.out.print(piece);
+        resetColor();
     }
 
     public static void printCapturedPieces(List<ChessPiece> capturedPieces) {
+        System.out.println("Captured pieces:");
+        printWhiteCapturedPieces(capturedPieces);
+        printBlackCapturedPieces(capturedPieces);
+        System.out.println();
+    }
+
+    private static void printWhiteCapturedPieces(List<ChessPiece> capturedPieces) {
         List<ChessPiece> whiteCaptured = capturedPieces.stream()
             .filter(ChessPiece::isWhitePiece)
             .toList();
 
+        changeToWhiteColor();
+        System.out.print("White: ");
+        printArray(whiteCaptured.toArray());
+        resetColor();
+    }
+
+    private static void printBlackCapturedPieces(List<ChessPiece> capturedPieces) {
         List<ChessPiece> blackCaptured = capturedPieces.stream()
             .filter(ChessPiece::isBlackPiece)
             .toList();
 
-        System.out.println("Captured pieces:");
-        System.out.print(ANSI_WHITE);
-        System.out.print("White: ");
-        System.out.println(Arrays.toString(whiteCaptured.toArray()));
-        System.out.print(ANSI_RESET);
-        System.out.print(ANSI_GREEN);
+        changeToBlackColor();
         System.out.print("Black: ");
-        System.out.println(Arrays.toString(blackCaptured.toArray()));
+        printArray(blackCaptured.toArray());
+        resetColor();
+    }
+
+    private static void printArray(Object[] capturedPieces) {
+        System.out.println(Arrays.toString(capturedPieces));
+    }
+
+    private static void changeToYellowBackground() {
+        System.out.print(ANSI_YELLOW_BACKGROUND);
+    }
+
+    private static void changeToRedBackground() {
+        System.out.print(ANSI_RED_BACKGROUND);
+    }
+
+    private static void changeToBlueBackground() {
+        System.out.print(ANSI_BLUE_BACKGROUND);
+    }
+
+    private static void changeToColor(Color color) {
+        if (Color.WHITE.equals(color))
+            changeToWhiteColor();
+        else
+            changeToBlackColor();
+    }
+
+    private static void changeToWhiteColor() {
+        System.out.print(ANSI_WHITE);
+    }
+
+    private static void changeToBlackColor() {
+        System.out.print(ANSI_GREEN);
+    }
+
+    private static void resetColor() {
         System.out.print(ANSI_RESET);
     }
 

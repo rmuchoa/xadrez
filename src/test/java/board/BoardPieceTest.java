@@ -12,7 +12,6 @@ import static java.lang.String.format;
 import board.dummy.DummyBoard;
 import board.dummy.DummyBoardPiece;
 import board.dummy.DummyBoardPosition;
-import board.dummy.builder.DummyBoardPositionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
