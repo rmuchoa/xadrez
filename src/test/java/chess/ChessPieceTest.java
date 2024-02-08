@@ -135,51 +135,6 @@ public class ChessPieceTest {
     }
 
     @Test
-    public void shouldReturnTrueOnAskChessPieceIsInCheckWhenPieceIsFlaggedAsInCheckAndNotInCheckMate() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-        piece.inCheck = true;
-        piece.inCheckMate = false;
-
-        // when
-        boolean inCheck = piece.isInCheck();
-
-        // then
-        assertTrue(inCheck, format("Chess piece isInCheck suppose to be true, but wasn't, was %s. inCheck[%s] and inCheckMate[%s].", inCheck, piece.inCheck, piece.inCheckMate));
-    }
-
-    @Test
-    public void shouldReturnFalseOnAskChessPieceIsInCheckWhenPieceIsFlaggedAsFalseInCheck() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-        piece.inCheck = false;
-        piece.inCheckMate = false;
-
-        // when
-        boolean inCheck = piece.isInCheck();
-
-        // then
-        assertFalse(inCheck, format("Chess piece isInCheck suppose to be false, but wasn't, was %s. inCheck[%s] and inCheckMate[%s].", inCheck, piece.inCheck, piece.inCheckMate));
-    }
-
-    @Test
-    public void shouldReturnFalseOnAskChessPieceIsInCheckWhenPieceIsFlaggedAsTrueInCheckButTrueInCheckMateToo() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-        piece.inCheck = true;
-        piece.inCheckMate = true;
-
-        // when
-        boolean inCheck = piece.isInCheck();
-
-        // then
-        assertFalse(inCheck, format("Chess piece isInCheck suppose to be false, but wasn't, was %s. inCheck[%s] and inCheckMate[%s].", inCheck, piece.inCheck, piece.inCheckMate));
-    }
-
-    @Test
     public void shouldReturnTrueOnAskChessPieceIsKingWhenPieceIsAnInstanceOfKing() {
         // given
         King king = new King(Color.WHITE);
@@ -428,46 +383,6 @@ public class ChessPieceTest {
     }
 
     @Test
-    public void shouldChessPieceApplyTrueOnInCheckFlagWhenAskPieceToInformCheck() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-
-        // when
-        piece.informCheck();
-
-        // then
-        assertTrue(piece.inCheck, format("Chess piece suppose to is in check, but wasn't. inCheck[%s].", piece.inCheck));
-    }
-
-    @Test
-    public void shouldChessPieceApplyFalseOnInCheckFlagWhenAskPieceToRevokeCheck() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-        piece.inCheck = true;
-
-        // when
-        piece.revokeCheck();
-
-        // then
-        assertFalse(piece.inCheck, format("Chess piece suppose to is not in check, but was. inCheck[%s].", piece.inCheck));
-    }
-
-    @Test
-    public void shouldChessPieceApplyTrueOnInCheckMateFlagWhenAskPieceToInformCheckMate() {
-        // given
-        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
-        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
-
-        // when
-        piece.informCheckMate();
-
-        // then
-        assertTrue(piece.inCheckMate, format("Chess piece suppose to is in check-mate, but wasn't. inCheckMate[%s].", piece.inCheckMate));
-    }
-
-    @Test
     public void shouldChessPieceCannotBeEqualsFromAnObjectWhenItIsNotAnInstanceOfChessPiece() {
         // given
         DummyChessBoard board = DummyChessBoard.builder().match(match).build();
@@ -683,6 +598,82 @@ public class ChessPieceTest {
 
         // then
         assertFalse(resultFlag, format("Piece suppose to has some available movements, but hasn't. availableMovements[%s]", piece.availableMovements));
+    }
+
+    @Test
+    public void shouldNeverBeInCheckWhenChessPieceIsNotAKingPiece() {
+        // given
+        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
+
+        // when
+        boolean resultFlag = piece.isInCheckPiece();
+
+        // then
+        assertFalse(resultFlag, format("Chess piece suppose not to be in check, but was. piece[%s]", piece));
+    }
+
+    @Test
+    public void shouldNotBeInCheckWhenChessPieceIsAKingPieceButWithoutCheckFlag() {
+        // given
+        ChessPiece piece = new King(Color.WHITE);;
+
+        // when
+        boolean resultFlag = piece.isInCheckPiece();
+
+        // then
+        assertFalse(resultFlag, format("Chess piece suppose not to be in check, but was. piece[%s]", piece));
+    }
+
+    @Test
+    public void shouldBeInCheckWhenChessPieceIsAKingPieceWithInformedCheck() {
+        // given
+        King king = new King(Color.WHITE);
+        king.informCheck();
+
+        // when
+        boolean resultFlag = king.isInCheckPiece();
+
+        // then
+        assertTrue(resultFlag, format("Chess piece suppose to be in check, but wasn't. piece[%s]", king));
+    }
+
+    @Test
+    public void shouldNeverBeInCheckMateWhenChessPieceIsNotAKingPiece() {
+        // given
+        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
+
+        // when
+        boolean resultFlag = piece.isInCheckMatePiece();
+
+        // then
+        assertFalse(resultFlag, format("Chess piece suppose not to be in check mate, but was. piece[%s]", piece));
+    }
+
+    @Test
+    public void shouldNotBeInCheckMateWhenChessPieceIsAKingPieceButWithoutCheckMateFlag() {
+        // given
+        ChessPiece piece = new King(Color.WHITE);;
+
+        // when
+        boolean resultFlag = piece.isInCheckPiece();
+
+        // then
+        assertFalse(resultFlag, format("Chess piece suppose not to be in check, but was. piece[%s]", piece));
+    }
+
+    @Test
+    public void shouldBeInCheckMateWhenChessPieceIsAKingPieceWithInformedCheckMate() {
+        // given
+        King king = new King(Color.WHITE);
+        king.informCheck();
+
+        // when
+        boolean resultFlag = king.isInCheckPiece();
+
+        // then
+        assertTrue(resultFlag, format("Chess piece suppose to be in check mate, but wasn't. piece[%s]", king));
     }
 
 }

@@ -12,8 +12,6 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
     private final Color color;
     private ChessMatch match;
     protected int moveCount;
-    protected boolean inCheck;
-    protected boolean inCheckMate;
     protected List<ChessMovement> availableMovements;
 
     protected ChessPiece(Color color) {
@@ -40,10 +38,6 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
 
     public boolean isBlackPiece() {
         return Color.BLACK.equals(color);
-    }
-
-    public boolean isInCheck() {
-        return inCheck && !inCheckMate;
     }
 
     public boolean isKing() {
@@ -90,18 +84,6 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return moveCount == 0;
     }
 
-    public void informCheck() {
-        inCheck = true;
-    }
-
-    public void revokeCheck() {
-        inCheck = false;
-    }
-
-    public void informCheckMate() {
-        inCheckMate = true;
-    }
-
     @Override
     public boolean equals(Object any) {
         return any instanceof ChessPiece
@@ -135,4 +117,13 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
     }
 
     public abstract ChessPiece clonePiece(ChessBoard clonedBoard);
+
+    public boolean isInCheckPiece() {
+        return this instanceof King king && king.isInCheck();
+    }
+
+    public boolean isInCheckMatePiece() {
+        return this instanceof King king && king.isInCheckMate();
+    }
+
 }

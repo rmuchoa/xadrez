@@ -43,8 +43,6 @@ public class Queen extends ChessPiece {
     public ChessPiece clonePiece(ChessBoard clonedBoard) {
         Queen clonedQueen = new Queen(getColor());
         clonedQueen.moveCount = getMoveCount();
-        clonedQueen.inCheck = isInCheck();
-        clonedQueen.inCheckMate = isInCheckMate();
         clonedQueen.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
         for (int i = 0; i < availableMovements.size(); i++) {

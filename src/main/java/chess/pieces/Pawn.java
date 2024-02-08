@@ -36,8 +36,6 @@ public class Pawn extends ChessPiece {
     public ChessPiece clonePiece(ChessBoard clonedBoard) {
         Pawn clonedPawn = new Pawn(getColor());
         clonedPawn.moveCount = getMoveCount();
-        clonedPawn.inCheck = isInCheck();
-        clonedPawn.inCheckMate = isInCheckMate();
         clonedPawn.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
         for (int i = 0; i < availableMovements.size(); i++) {

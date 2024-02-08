@@ -33,8 +33,6 @@ public class Rook extends ChessPiece {
     public ChessPiece clonePiece(ChessBoard clonedBoard) {
         Rook clonedRook = new Rook(getColor());
         clonedRook.moveCount = getMoveCount();
-        clonedRook.inCheck = isInCheck();
-        clonedRook.inCheckMate = isInCheckMate();
         clonedRook.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
         for (int i = 0; i < availableMovements.size(); i++) {

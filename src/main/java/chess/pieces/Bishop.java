@@ -33,8 +33,6 @@ public class Bishop extends ChessPiece {
     public ChessPiece clonePiece(ChessBoard clonedBoard) {
         Bishop clonedBishop = new Bishop(getColor());
         clonedBishop.moveCount = getMoveCount();
-        clonedBishop.inCheck = isInCheck();
-        clonedBishop.inCheckMate = isInCheckMate();
         clonedBishop.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
         for (int i = 0; i < availableMovements.size(); i++) {

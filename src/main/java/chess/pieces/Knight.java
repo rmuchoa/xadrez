@@ -40,8 +40,6 @@ public class Knight extends ChessPiece {
     public ChessPiece clonePiece(ChessBoard clonedBoard) {
         Knight clonedKnight = new Knight(getColor());
         clonedKnight.moveCount = getMoveCount();
-        clonedKnight.inCheck = isInCheck();
-        clonedKnight.inCheckMate = isInCheckMate();
         clonedKnight.placeOnPosition(getPosition().clonePosition(), clonedBoard);
 
         for (int i = 0; i < availableMovements.size(); i++) {

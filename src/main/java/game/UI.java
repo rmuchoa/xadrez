@@ -8,6 +8,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
 import chess.pieces.Empty;
+import chess.pieces.King;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -156,10 +157,10 @@ public class UI {
     }
 
     public static void printPiece(ChessPiece piece, boolean background) {
-        if (piece.isInCheck())
+        if (piece.isInCheckPiece())
             changeToYellowBackground();
 
-        if (piece.isInCheckMate())
+        if (piece.isInCheckMatePiece())
             changeToRedBackground();
 
         if (background)

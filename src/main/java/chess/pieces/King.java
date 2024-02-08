@@ -17,11 +17,32 @@ import chess.Color;
 import chess.movement.CastlingMovement;
 import chess.movement.DiagonalMovement;
 import chess.movement.LineMovement;
+import lombok.Getter;
 
+@Getter
 public class King extends ChessPiece {
+
+    protected boolean inCheck;
+    protected boolean inCheckMate;
 
     public King(Color color) {
         super(color);
+    }
+
+    public boolean isInCheck() {
+        return inCheck && !inCheckMate;
+    }
+
+    public void informCheck() {
+        inCheck = true;
+    }
+
+    public void revokeCheck() {
+        inCheck = false;
+    }
+
+    public void informCheckMate() {
+        inCheckMate = true;
     }
 
     @Override
