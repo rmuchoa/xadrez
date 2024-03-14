@@ -1,7 +1,7 @@
 package chess;
 
-import static chess.ChessMovement.AllowedSlotsType.LIMITED_SLOTS;
-import static chess.ChessMovement.AllowedSlotsType.TILL_FINAL_SLOTS;
+import static chess.ChessMovement.MovementDurationType.LIMITED;
+import static chess.ChessMovement.MovementDurationType.All_EXTENSION;
 import static chess.ChessPosition.buildPositionFor;
 
 import chess.movement.types.MovementDirection;
@@ -33,14 +33,14 @@ public abstract class ChessMovement {
     }
 
     public List<ChessMovement> checkMovements() {
-        return checkMovements(this, TILL_FINAL_SLOTS, null);
+        return checkMovements(this, All_EXTENSION, null);
     }
 
     public List<ChessMovement> checkMovements(Integer movementSlots) {
-        return checkMovements(this, LIMITED_SLOTS, movementSlots);
+        return checkMovements(this, LIMITED, movementSlots);
     }
 
-    public List<ChessMovement> checkMovements(ChessMovement movement, AllowedSlotsType slotsType, Integer allowedSlots) {
+    public List<ChessMovement> checkMovements(ChessMovement movement, MovementDurationType duration, Integer remainingMovements) {
         List<ChessMovement> availableMovements = new ArrayList<>();
 
         if (movement == null || movement.isNotAvailableMovement())
@@ -52,13 +52,18 @@ public abstract class ChessMovement {
             return availableMovements;
 
 
-        if (isAllowedToMoveSlotsFreely(slotsType) || hasMoreAllowedSlots(slotsType, allowedSlots)) {
+        if (duration.allowMoveFreely() || duration.allowMoreMovements(remainingMovements)) {
 
             try {
                 ChessMovement nextMovement = movement.buildNextMovement();
-                List<ChessMovement> allowedNextMovements = checkMovements(nextMovement, slotsType,
-                    resolveAllowedSlots(allowedSlots));
+
+                List<ChessMovement> allowedNextMovements = checkMovements(
+                    nextMovement,
+                    duration,
+                    decreaseMovementDistance(remainingMovements));
+
                 availableMovements.addAll(allowedNextMovements);
+
             } catch (ChessException ignored) {}
 
         }
@@ -66,24 +71,20 @@ public abstract class ChessMovement {
         return availableMovements;
     }
 
-    private Integer resolveAllowedSlots(Integer allowedSlots) {
-        if (allowedSlots == null)
+    protected Integer decreaseMovementDistance(Integer remainingSlots) {
+
+        if (remainingSlots == null)
             return null;
 
-        return --allowedSlots;
-    }
+        if (remainingSlots > 0)
+            return --remainingSlots;
 
-    private boolean isAllowedToMoveSlotsFreely(AllowedSlotsType slotsType) {
-        return TILL_FINAL_SLOTS.equals(slotsType);
-    }
-
-    private Boolean hasMoreAllowedSlots(AllowedSlotsType slotsType, Integer allowedSlots) {
-        return LIMITED_SLOTS.equals(slotsType) && allowedSlots != null && ONE_SLOTS < allowedSlots;
+        return remainingSlots;
     }
 
     protected abstract ChessMovement buildNextMovement();
 
-    private boolean isNotAvailableMovement() {
+    protected boolean isNotAvailableMovement() {
         return !isAvailableMovement();
     }
 
@@ -103,8 +104,7 @@ public abstract class ChessMovement {
     }
 
     protected boolean hasOpponentOnTargetPosition() {
-        return doesExistsTargetPosition()
-            && board.isBoardPositionOccupied(target)
+        return isTargetPositionOccupied()
             && thereIsAnOpponentOnTargetPosition();
     }
 
@@ -112,10 +112,10 @@ public abstract class ChessMovement {
         return board.doesExists(target);
     }
 
-    private boolean thereIsAnOpponentOnTargetPosition() {
-        ChessPiece piece = board.getPiecePlacedOn(source);
-        ChessPiece otherPiece = board.getPiecePlacedOn(target);
-        return piece.isOpponentOf(otherPiece);
+    protected boolean thereIsAnOpponentOnTargetPosition() {
+        ChessPiece sourcePiece = board.getPiecePlacedOn(source);
+        ChessPiece targetPiece = board.getPiecePlacedOn(target);
+        return sourcePiece.isOpponentOf(targetPiece);
     }
 
     public static ChessPosition getNextPosition(ChessPosition source, MovementDirection direction) {
@@ -133,11 +133,27 @@ public abstract class ChessMovement {
 
     public abstract ChessMovement cloneMovement(ChessPiece clonedPiece);
 
-    public enum AllowedSlotsType {
+    public enum MovementDurationType {
 
-        TILL_FINAL_SLOTS,
-        LIMITED_SLOTS
+        All_EXTENSION(true),
+        LIMITED(false);
 
+        private final boolean freeWayToMove;
+
+        MovementDurationType(boolean freeWayToMove) {
+            this.freeWayToMove = freeWayToMove;
+        }
+
+        public boolean allowMoveFreely() {
+            return freeWayToMove;
+        }
+
+        public boolean allowMoreMovements(int remainingSlots) {
+            if (allowMoveFreely())
+                return true;
+
+            return ONE_SLOTS < remainingSlots;
+        }
     }
 
 }

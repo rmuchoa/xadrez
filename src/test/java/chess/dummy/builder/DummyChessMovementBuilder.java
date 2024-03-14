@@ -12,6 +12,8 @@ public class DummyChessMovementBuilder {
     private ChessPosition source;
     private ChessPosition target;
     private MovementType movementType;
+    private ChessMovement nextMovement;
+    private ChessMovement clonedMovement;
 
     private DummyChessMovementBuilder() {}
 
@@ -67,7 +69,24 @@ public class DummyChessMovementBuilder {
         return this;
     }
 
-    public ChessMovement build() {
-        return new DummyChessMovement(piece, source, target, movementType);
+    public DummyChessMovementBuilder nextMovement(ChessMovement nextMovement) {
+        this.nextMovement = nextMovement;
+        return this;
     }
+
+    public DummyChessMovementBuilder clonedMovement(ChessMovement clonedMovement) {
+        this.clonedMovement = clonedMovement;
+        return this;
+    }
+
+    public DummyChessMovement build() {
+        return new DummyChessMovement(
+            piece,
+            source,
+            target,
+            movementType,
+            nextMovement,
+            clonedMovement);
+    }
+
 }

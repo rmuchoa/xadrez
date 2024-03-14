@@ -1,15 +1,15 @@
 package chess.dummy.builder;
 
+import chess.ChessBoard;
 import chess.ChessMovement;
 import chess.ChessPosition;
 import chess.Color;
-import chess.dummy.DummyChessBoard;
 import chess.dummy.DummyChessPiece;
 import java.util.List;
 
 public class DummyChessPieceBuilder {
 
-    private DummyChessBoard board;
+    private ChessBoard board;
     private ChessPosition position;
     private Color color;
     private List<ChessMovement> allAvailableMovements;
@@ -20,7 +20,7 @@ public class DummyChessPieceBuilder {
         return new DummyChessPieceBuilder();
     }
 
-    public DummyChessPieceBuilder board(DummyChessBoard board) {
+    public DummyChessPieceBuilder board(ChessBoard board) {
         this.board = board;
         return this;
     }

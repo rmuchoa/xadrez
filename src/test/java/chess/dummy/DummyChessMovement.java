@@ -13,10 +13,17 @@ public class DummyChessMovement extends ChessMovement {
         ChessPiece piece,
         ChessPosition source,
         ChessPosition target,
-        MovementType type) {
+        MovementType type,
+        ChessMovement nextMovement,
+        ChessMovement clonedMovement) {
 
         super(piece, source, target, type);
+        this.nextMovement = nextMovement;
+        this.clonedMovement = clonedMovement;
     }
+
+    private final ChessMovement nextMovement;
+    private final ChessMovement clonedMovement;
 
     public static DummyChessMovementBuilder builder() {
         return DummyChessMovementBuilder.builder();
@@ -24,11 +31,11 @@ public class DummyChessMovement extends ChessMovement {
 
     @Override
     protected ChessMovement buildNextMovement() {
-        return null;
+        return nextMovement;
     }
 
     @Override
     public ChessMovement cloneMovement(ChessPiece clonedPiece) {
-        return null;
+        return clonedMovement;
     }
 }
