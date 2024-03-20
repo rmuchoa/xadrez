@@ -18,10 +18,10 @@ public abstract class ChessMovement {
 
     private static final int ONE_SLOTS = 1;
 
+    protected final ChessBoard board;
     private final ChessPiece piece;
     private final ChessPosition source;
     private final ChessPosition target;
-    private final ChessBoard board;
     private final MovementType type;
 
     public ChessMovement(ChessPiece piece, ChessPosition source, ChessPosition target, MovementType type) {
@@ -117,6 +117,39 @@ public abstract class ChessMovement {
         ChessPiece targetPiece = board.getPiecePlacedOn(target);
         return sourcePiece.isOpponentOf(targetPiece);
     }
+
+    public ChessPiece doMove() {
+        ChessPiece movingPiece = board.removePieceFrom(source);
+        ChessPiece capturedPiece = board.removePieceFrom(target);
+
+        board.placePieceOn(target, movingPiece);
+        movingPiece.increaseMoveCount();
+
+        doComposedMove(movingPiece);
+
+        board.getAllPlacedPieces()
+            .forEach(ChessPiece::setUpAvailableMovements);
+
+        return capturedPiece;
+    }
+
+    protected abstract void doComposedMove(ChessPiece triggerPiece);
+
+    public void undoMove(ChessPiece capturedPiece) {
+        ChessPiece movingPiece = board.removePieceFrom(target);
+        board.placePieceOn(source, movingPiece);
+        movingPiece.decreaseMoveCount();
+
+        if (capturedPiece != null)
+            board.placePieceOn(target, capturedPiece);
+
+        undoComposedMove(movingPiece);
+
+        board.getAllPlacedPieces()
+            .forEach(ChessPiece::setUpAvailableMovements);
+    }
+
+    protected abstract void undoComposedMove(ChessPiece triggerPiece);
 
     public static ChessPosition getNextPosition(ChessPosition source, MovementDirection direction) {
         return switch (direction) {

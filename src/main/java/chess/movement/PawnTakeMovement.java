@@ -43,6 +43,16 @@ public class PawnTakeMovement extends ChessMovement {
             && hasOpponentOnTargetPosition();
     }
 
+    @Override
+    protected void doComposedMove(ChessPiece triggerPiece) {
+
+    }
+
+    @Override
+    protected void undoComposedMove(ChessPiece triggerPiece) {
+
+    }
+
     public static List<ChessMovement> checkTakeMovement(Pawn pawn, MovementDirection direction) {
         try {
             if (isNotAllowedDirection(pawn, direction))

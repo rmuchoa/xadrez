@@ -413,4 +413,46 @@ public class ChessPositionTest {
         assertEquals(chessRow, clonedPosition.getChessRow(), format("Cloned position suppose to have same chessRow %s, but was different %s!", chessRow, clonedPosition.getChessRow()));
     }
 
+    @Test
+    public void shouldReturnIsNotTargetFromMovementWhenMovementIsNull() {
+        // given
+        ChessPosition position = ChessPosition.buildPositionFor('a', 1);
+
+        // when
+        boolean resultIsTarget = position.isTargetFrom(null);
+
+        // then
+        assertFalse(resultIsTarget, format("Position suppose not to be target from null movement, but was. resultIsTarget[%s]", resultIsTarget));
+    }
+
+    @Test
+    public void shouldReturnIsNotTargetFromMovementWhenTargetPositionIsDifferentPosition() {
+        // given
+        ChessMovement movement = mock(ChessMovement.class);
+        ChessPosition target = ChessPosition.buildPositionFor('a', 2);
+        ChessPosition position = ChessPosition.buildPositionFor('a', 1);
+        when(movement.getTarget()).thenReturn(target);
+
+        // when
+        boolean resultIsTarget = position.isTargetFrom(movement);
+
+        // then
+        assertFalse(resultIsTarget, format("Position suppose not to be target from movement, but was. resultIsTarget[%s]", resultIsTarget));
+    }
+
+    @Test
+    public void shouldReturnIsTargetFromMovementWhenTargetPositionIsSamePosition() {
+        // given
+        ChessMovement movement = mock(ChessMovement.class);
+        ChessPosition target = ChessPosition.buildPositionFor('a', 1);
+        ChessPosition position = ChessPosition.buildPositionFor('a', 1);
+        when(movement.getTarget()).thenReturn(target);
+
+        // when
+        boolean resultIsTarget = position.isTargetFrom(movement);
+
+        // then
+        assertTrue(resultIsTarget, format("Position suppose to be target from movement, but wasn't. resultIsTarget[%s]", resultIsTarget));
+    }
+
 }

@@ -32,6 +32,16 @@ public class KnightElMovement extends ChessMovement {
         return null;
     }
 
+    @Override
+    protected void doComposedMove(ChessPiece triggerPiece) {
+
+    }
+
+    @Override
+    protected void undoComposedMove(ChessPiece triggerPiece) {
+
+    }
+
     public static List<ChessMovement> checkSingleMovement(Knight knight, MovementDirection primary, MovementDirection secondary) {
         try {
             return buildMovement(knight, primary, secondary)

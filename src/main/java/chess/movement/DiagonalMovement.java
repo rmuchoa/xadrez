@@ -27,6 +27,16 @@ public class DiagonalMovement extends ChessMovement {
         return buildMovement(getPiece(), getTarget(), direction);
     }
 
+    @Override
+    protected void doComposedMove(ChessPiece triggerPiece) {
+
+    }
+
+    @Override
+    protected void undoComposedMove(ChessPiece triggerPiece) {
+
+    }
+
     public static List<ChessMovement> checkSingleMovement(ChessPiece piece, MovementDirection direction) {
         try {
             return buildMovement(piece, piece.getPosition(), direction)

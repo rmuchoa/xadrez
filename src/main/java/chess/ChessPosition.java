@@ -152,4 +152,8 @@ public class ChessPosition extends BoardPosition {
         return new ChessPosition(getChessColumn(), getChessRow());
     }
 
+    public boolean isTargetFrom(ChessMovement movement) {
+        return movement != null && equals(movement.getTarget());
+    }
+
 }

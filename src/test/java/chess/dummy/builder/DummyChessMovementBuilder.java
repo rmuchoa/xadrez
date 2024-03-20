@@ -14,6 +14,8 @@ public class DummyChessMovementBuilder {
     private MovementType movementType;
     private ChessMovement nextMovement;
     private ChessMovement clonedMovement;
+    private Boolean composedMoveDone;
+    private Boolean composedMoveUndone;
 
     private DummyChessMovementBuilder() {}
 
@@ -79,6 +81,16 @@ public class DummyChessMovementBuilder {
         return this;
     }
 
+    public DummyChessMovementBuilder composedMoveDone(boolean composedMoveDone) {
+        this.composedMoveDone = composedMoveDone;
+        return this;
+    }
+
+    public DummyChessMovementBuilder composedMoveUndone(boolean composedMoveUndone) {
+        this.composedMoveUndone = composedMoveUndone;
+        return this;
+    }
+
     public DummyChessMovement build() {
         return new DummyChessMovement(
             piece,
@@ -86,7 +98,9 @@ public class DummyChessMovementBuilder {
             target,
             movementType,
             nextMovement,
-            clonedMovement);
+            clonedMovement,
+            composedMoveDone,
+            composedMoveUndone);
     }
 
 }

@@ -71,13 +71,14 @@ public class King extends ChessPiece {
             .anyMatch(movement -> {
                 boolean canBeSaved = false;
                 ChessMatch match = getMatch().cloneMatch();
-                ChessPiece captured = match.makeMovement(movement);
-                King opponentKing = match.getOpponentKing();
+                ChessBoard board = match.getBoard();
+                ChessPiece captured = movement.doMove();
+                King opponentKing = board.getOpponentKing();
 
-                if (match.cannotDetectCheckScenario(opponentKing))
+                if (board.cannotDetectCheckScenario(opponentKing))
                     canBeSaved = true;
 
-                match.undoMovement(movement, captured);
+                movement.undoMove(captured);
 
                 return canBeSaved;
             });

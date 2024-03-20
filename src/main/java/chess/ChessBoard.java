@@ -1,6 +1,7 @@
 package chess;
 
 import board.Board;
+import chess.pieces.King;
 import lombok.Getter;
 
 @Getter
@@ -16,19 +17,19 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
     }
 
     public ChessMovement getMovementFor(ChessPosition source, ChessPosition target) {
-        validateMovementOriginFrom(source);
+        validateMobilityFromOrigin(source);
         validateTargetPositionAvailability(source, target);
 
         ChessPiece movingPiece = getPiecePlacedOn(source);
 
-        return movingPiece.getAvailableMovements()
-            .stream()
-            .filter(movement -> target.equals(movement.getTarget()))
-            .findFirst()
-            .orElse(null);
+        return movingPiece.getMovementFor(target);
     }
 
-    public void validateMovementOriginFrom(ChessPosition source) {
+    public void validateMobilityFor(ChessPiece piece) {
+        validateMobilityFromOrigin(piece.getPosition());
+    }
+
+    public void validateMobilityFromOrigin(ChessPosition source) {
         validatePiecePresenceOn(source);
         validateCurrentPlayerPiece(source);
         validatePieceMobility(source);
@@ -58,6 +59,81 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
 
         if (piece.canNotTargetThis(target))
             throw new ChessException("The piece cannot move to target position " + target);
+    }
+
+    public boolean cannotDetectCheckScenario(King king) {
+        return !canDetectCheckScenario(king);
+    }
+
+    public boolean canDetectCheckScenario(King king) {
+        return getAllPlacedPieces()
+            .stream()
+            .filter(king::isOpponentOf)
+            .anyMatch(king::canBeTargetedBy);
+    }
+
+    public King getOpponentKing() {
+        return getAllPlacedPieces()
+            .stream()
+            .filter(ChessPiece::isKing)
+            .map(piece -> (King) piece)
+            .filter(King::isFromOpponentPlayer)
+            .findAny()
+            .orElse(null);
+    }
+
+    public King getCurrentKing() {
+        return getAllPlacedPieces()
+            .stream()
+            .filter(ChessPiece::isKing)
+            .map(piece -> (King) piece)
+            .filter(King::isFromCurrentPlayer)
+            .findAny()
+            .orElse(null);
+    }
+
+    public void checkOwnKing() {
+        King ownKing = getCurrentKing();
+
+        if (canDetectCheckScenario(ownKing))
+            throw new ChessException("This movement put your own king in check. Undoing all movement!");
+        else
+            ownKing.revokeCheck();
+    }
+
+    public boolean isOpponentKingNotInCheck() {
+        return !isOpponentKingInCheck();
+    }
+
+    public boolean isOpponentKingInCheck() {
+        King opponentKing = getOpponentKing();
+
+        if (canDetectCheckScenario(opponentKing)) {
+            opponentKing.informCheck();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isOpponentKingInCheckMate() {
+        if (isOpponentKingNotInCheck())
+            return false;
+
+        King opponentKing = getOpponentKing();
+
+        if (hasNoCheckSalvation(opponentKing)) {
+            opponentKing.informCheckMate();
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasNoCheckSalvation(King king) {
+        return getAllPlacedPieces()
+            .stream()
+            .filter(king::isCompanionOf)
+            .noneMatch(king::canBeSavedDuringCheckBy);
     }
 
     public void cloneIntoBoard(ChessBoard clonedBoard) {

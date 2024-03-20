@@ -3,6 +3,7 @@ package chess;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -598,6 +599,55 @@ public class ChessPieceTest {
 
         // then
         assertFalse(resultFlag, format("Piece suppose to has some available movements, but hasn't. availableMovements[%s]", piece.availableMovements));
+    }
+
+    @Test
+    public void shouldAskOtherPositionIsTargetFromMovementWhenOnCallingGetMovementForTargetPosition() {
+        // given
+        ChessMovement movement = mock(ChessMovement.class);
+        when(movement.getTarget()).thenReturn(otherPosition);
+
+        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
+        piece.availableMovements.add(movement);
+
+        // when
+        piece.getMovementFor(otherPosition);
+
+        // then
+        verify(otherPosition).isTargetFrom(movement);
+    }
+
+    @Test
+    public void shouldReturnNullWhenTargetPositionIsNotTargetFromAnyAvailableMovementOnCallingGetMovementForTargetPosition() {
+        // given
+        ChessMovement movement = mock(ChessMovement.class);
+        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
+        piece.availableMovements.add(movement);
+        when(otherPosition.isTargetFrom(movement)).thenReturn(false);
+
+        // when
+        ChessMovement resultantMovement = piece.getMovementFor(otherPosition);
+
+        // then
+        assertNull(resultantMovement, format("Obtained movement suppose to be null, but wasn't. availableMovement [%s] resultMovement [%s]", movement, resultantMovement));
+    }
+
+    @Test
+    public void shouldReturnFirstAvailableMovementWhenTargetPositionIsTargetFromFirstAvailableMovementOnCallingGetMovementForTargetPosition() {
+        // given
+        ChessMovement movement = mock(ChessMovement.class);
+        DummyChessBoard board = DummyChessBoard.builder().match(match).build();
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(position).color(Color.WHITE).build();
+        piece.availableMovements.add(movement);
+        when(otherPosition.isTargetFrom(movement)).thenReturn(true);
+
+        // when
+        ChessMovement resultantMovement = piece.getMovementFor(otherPosition);
+
+        // then
+        assertEquals(movement, resultantMovement, format("Obtained movement suppose to be equals availableMovement, but wasn't. availableMovement [%s] resultMovement [%s]", movement, resultantMovement));
     }
 
     @Test

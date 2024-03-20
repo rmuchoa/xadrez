@@ -37,6 +37,16 @@ public class PawnWalkMovement extends ChessMovement {
             && isNotAnOverWalkingMovement();
     }
 
+    @Override
+    protected void doComposedMove(ChessPiece triggerPiece) {
+
+    }
+
+    @Override
+    protected void undoComposedMove(ChessPiece triggerPiece) {
+
+    }
+
     private boolean isNotAnOverWalkingMovement() {
         return !isAnOverWalkingMovement();
     }

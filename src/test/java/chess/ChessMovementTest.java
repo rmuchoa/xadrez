@@ -5,13 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.verify;
 
-import chess.ChessMovement.MovementDurationType;
 import chess.dummy.DummyChessMovement;
 import chess.dummy.DummyChessPiece;
 import chess.movement.types.MovementDirection;
@@ -718,6 +720,235 @@ public class ChessMovementTest {
 
         // then
         assertTrue(isOpponent, format("Movement source piece suppose to be opponent from target piece, but wasn't. isOpponent[%s]", isOpponent));
+    }
+
+    @Test
+    public void shouldAskBoardToRemoveMovingPieceFromSourcePositionWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        verify(board).removePieceFrom(source);
+    }
+
+    @Test
+    public void shouldAskBoardToRemoveCapturedPieceFromTargetPositionWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        verify(board).removePieceFrom(target);
+    }
+
+    @Test
+    public void shouldAskBoardToPlaceMovingPieceOnTargetPositionWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        verify(board).placePieceOn(target, sourcePiece);
+    }
+
+    @Test
+    public void shouldAskMovingPieceToIncreaseMoveCountWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        verify(sourcePiece).increaseMoveCount();
+    }
+
+    @Test
+    public void shouldDoComposedMoveWhenDoingMovementThatHasComposedMoveToDone() {
+        // given
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().composedMoveDone(false).piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        assertTrue(movement.isComposedMoveDone(), format("Composed move suppose to be done, but wasn't. composedMoveDone [%s]", movement.isComposedMoveDone()));
+    }
+
+    @Test
+    public void shouldComposedMoveNeverBeUndoneWhenDoingMovement() {
+        // given
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().composedMoveUndone(false).piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        assertFalse(movement.isComposedMoveUndone(), format("Composed move suppose never to be undone, but was. composedMoveUndone [%s]", movement.isComposedMoveUndone()));
+    }
+
+    @Test
+    public void shouldAskPlacedPieceToSetUpAvailableMovementsWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        when(board.getAllPlacedPieces()).thenReturn(List.of(sourcePiece, targetPiece));
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.doMove();
+
+        // then
+        verify(sourcePiece).setUpAvailableMovements();
+        verify(targetPiece).setUpAvailableMovements();
+    }
+
+    @Test
+    public void shouldReturnCapturedPieceWhenDoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(source)).thenReturn(sourcePiece);
+        when(board.removePieceFrom(target)).thenReturn(targetPiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        ChessPiece capturedPiece = movement.doMove();
+
+        // then
+        assertEquals(targetPiece, capturedPiece, format("Captured piece suppose to be the movement target piece, but wasn't. capturedPiece [%s] targetPiece [%s]", capturedPiece, targetPiece));
+    }
+
+    @Test
+    public void shouldAskBoardToRemoveMovingPieceFromTargetPositionWhenUndoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        verify(board).removePieceFrom(target);
+    }
+
+    @Test
+    public void shouldAskBoardToPlaceBackMovingPieceOnSourcePositionWhenUndoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        verify(board).placePieceOn(source, sourcePiece);
+    }
+
+    @Test
+    public void shouldAskMovingPieceToDecreaseMoveCountWhenUndoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        verify(sourcePiece).decreaseMoveCount();
+    }
+
+    @Test
+    public void shouldAskBoardToPlaceBackCapturedPieceOnTargetPositionWhenUndoingMove() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        verify(board).placePieceOn(target, targetPiece);
+    }
+
+    @Test
+    public void shouldNeverPlaceAnyCapturedPieceOnTargetPositionWhenCapturedPieceIsNull() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(null);
+
+        // then
+        verify(board, never()).placePieceOn(eq(target), any(ChessPiece.class));
+    }
+
+    @Test
+    public void shouldComposedMoveBeUndoneWhenUndoingMovementThatHasComposedMoveToUndo() {
+        // given
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().composedMoveUndone(false).piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        assertTrue(movement.isComposedMoveUndone(), format("Composed move suppose to be undone, but wasn't. composedMoveUndone [%s]", movement.isComposedMoveUndone()));
+    }
+
+    @Test
+    public void shouldComposedMoveNeverBeDoneWhenUndoingMovement() {
+        // given
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        DummyChessMovement movement = DummyChessMovement.builder().composedMoveDone(false).piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        assertFalse(movement.isComposedMoveDone(), format("Composed move suppose never to be done, but was. composedMoveDone [%s]", movement.isComposedMoveDone()));
+    }
+
+    @Test
+    public void shouldAskAllPlacedPiecesToSetUpAvailableMovementsWhenUndoingMovement() {
+        //
+        when(piece.getBoard()).thenReturn(board);
+        when(board.removePieceFrom(target)).thenReturn(sourcePiece);
+        when(board.getAllPlacedPieces()).thenReturn(List.of(sourcePiece, targetPiece));
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).build();
+
+        // when
+        movement.undoMove(targetPiece);
+
+        // then
+        verify(sourcePiece).setUpAvailableMovements();
+        verify(targetPiece).setUpAvailableMovements();
     }
 
     @Test

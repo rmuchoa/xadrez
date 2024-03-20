@@ -116,7 +116,13 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
         return getAvailableMovements().isEmpty();
     }
 
-    public abstract ChessPiece clonePiece(ChessBoard clonedBoard);
+    public ChessMovement getMovementFor(ChessPosition target) {
+        return getAvailableMovements()
+            .stream()
+            .filter(target::isTargetFrom)
+            .findFirst()
+            .orElse(null);
+    }
 
     public boolean isInCheckPiece() {
         return this instanceof King king && king.isInCheck();
@@ -125,5 +131,7 @@ public abstract class ChessPiece extends BoardPiece<ChessPosition, ChessPiece, C
     public boolean isInCheckMatePiece() {
         return this instanceof King king && king.isInCheckMate();
     }
+
+    public abstract ChessPiece clonePiece(ChessBoard clonedBoard);
 
 }

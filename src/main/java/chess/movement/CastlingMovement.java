@@ -56,6 +56,20 @@ public class CastlingMovement extends ChessMovement {
         return false;
     }
 
+    @Override
+    protected void doComposedMove(ChessPiece triggerPiece) {
+        if (triggerPiece instanceof King) {
+            executeRookCastling();
+        }
+    }
+
+    @Override
+    protected void undoComposedMove(ChessPiece triggerPiece) {
+        if (triggerPiece instanceof King) {
+            undoRookCastling();
+        }
+    }
+
     private boolean isAvailableKingMovement(King king) {
         return king.hasNotMovedYet() && hasKingFreeWayToTarget(king)
             && rookMovement != null && rookMovement.isAvailableMovement();
@@ -183,6 +197,22 @@ public class CastlingMovement extends ChessMovement {
             case WEST -> buildPositionFor(rookPosition.getThreeBesideEastChessColumn(), rookPosition.getSameChessRow());
             case null, default -> null;
         };
+    }
+
+    private void executeRookCastling() {
+        ChessMovement rookMovement = getRookMovement();
+
+        ChessPiece rook = board.removePieceFrom(rookMovement.getSource());
+        board.placePieceOn(rookMovement.getTarget(), rook);
+        rook.increaseMoveCount();
+    }
+
+    private void undoRookCastling() {
+        ChessMovement rookMovement = getRookMovement();
+
+        ChessPiece rook = board.removePieceFrom(rookMovement.getTarget());
+        board.placePieceOn(rookMovement.getSource(), rook);
+        rook.increaseMoveCount();
     }
 
     @Override
