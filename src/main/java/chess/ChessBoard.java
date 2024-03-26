@@ -61,11 +61,7 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
             throw new ChessException("The piece cannot move to target position " + target);
     }
 
-    public boolean cannotDetectCheckScenario(King king) {
-        return !canDetectCheckScenario(king);
-    }
-
-    public boolean canDetectCheckScenario(King king) {
+    public boolean canDetectCheckFor(King king) {
         return getAllPlacedPieces()
             .stream()
             .filter(king::isOpponentOf)
@@ -95,7 +91,7 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
     public void checkOwnKing() {
         King ownKing = getCurrentKing();
 
-        if (canDetectCheckScenario(ownKing))
+        if (canDetectCheckFor(ownKing))
             throw new ChessException("This movement put your own king in check. Undoing all movement!");
         else
             ownKing.revokeCheck();
@@ -108,7 +104,7 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
     public boolean isOpponentKingInCheck() {
         King opponentKing = getOpponentKing();
 
-        if (canDetectCheckScenario(opponentKing)) {
+        if (canDetectCheckFor(opponentKing)) {
             opponentKing.informCheck();
             return true;
         }

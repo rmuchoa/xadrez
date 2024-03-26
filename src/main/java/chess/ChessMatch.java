@@ -1,5 +1,6 @@
 package chess;
 
+import chess.pieces.King;
 import java.util.List;
 import lombok.Getter;
 
@@ -97,4 +98,9 @@ public class ChessMatch {
         getBoard().cloneIntoBoard(clonedMatch.getBoard());
         return clonedMatch;
     }
+
+    public boolean canDetectCheckFor(King king) {
+        return board.canDetectCheckFor(king);
+    }
+
 }
