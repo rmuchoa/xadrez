@@ -17,7 +17,7 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
     }
 
     public ChessMovement getMovementFor(ChessPosition source, ChessPosition target) {
-        validateMobilityFromOrigin(source);
+        validateOriginMobilityFrom(source);
         validateTargetPositionAvailability(source, target);
 
         ChessPiece movingPiece = getPiecePlacedOn(source);
@@ -26,10 +26,10 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
     }
 
     public void validateMobilityFor(ChessPiece piece) {
-        validateMobilityFromOrigin(piece.getPosition());
+        validateOriginMobilityFrom(piece.getPosition());
     }
 
-    public void validateMobilityFromOrigin(ChessPosition source) {
+    public void validateOriginMobilityFrom(ChessPosition source) {
         validatePiecePresenceOn(source);
         validateCurrentPlayerPiece(source);
         validatePieceMobility(source);
@@ -54,7 +54,7 @@ public class ChessBoard extends Board<ChessPosition, ChessPiece, ChessBoard> {
             throw new ChessException("There is no possible movements for the chosen " + piece + " piece");
     }
 
-    private void validateTargetPositionAvailability(ChessPosition source, ChessPosition target) {
+    public void validateTargetPositionAvailability(ChessPosition source, ChessPosition target) {
         ChessPiece piece = getPiecePlacedOn(source);
 
         if (piece.canNotTargetThis(target))

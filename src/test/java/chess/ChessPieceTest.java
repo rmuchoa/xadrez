@@ -310,7 +310,7 @@ public class ChessPieceTest {
         piece.increaseMoveCount();
 
         // then
-        assertEquals(ONE, piece.moveCount);
+        assertEquals(ONE, piece.getMoveCount());
     }
 
     @Test
@@ -324,7 +324,7 @@ public class ChessPieceTest {
         piece.decreaseMoveCount();
 
         // then
-        assertEquals(ZERO, piece.moveCount);
+        assertEquals(ZERO, piece.getMoveCount());
     }
 
     @Test
@@ -338,7 +338,7 @@ public class ChessPieceTest {
         boolean alreadyMoved = piece.hasAlreadyMoved();
 
         // then
-        assertTrue(alreadyMoved, format("Chess piece suppose to has already moved, but wasn't. alreadyMoved[%s] moveCount[%s].", alreadyMoved, piece.moveCount));
+        assertTrue(alreadyMoved, format("Chess piece suppose to has already moved, but wasn't. alreadyMoved[%s] moveCount[%s].", alreadyMoved, piece.getMoveCount()));
     }
 
     @Test
@@ -352,7 +352,7 @@ public class ChessPieceTest {
         boolean alreadyMoved = piece.hasAlreadyMoved();
 
         // then
-        assertFalse(alreadyMoved, format("Chess piece cannot has already moved, but was. alreadyMoved[%s] moveCount[%s].", alreadyMoved, piece.moveCount));
+        assertFalse(alreadyMoved, format("Chess piece cannot has already moved, but was. alreadyMoved[%s] moveCount[%s].", alreadyMoved, piece.getMoveCount()));
     }
 
     @Test
@@ -366,7 +366,7 @@ public class ChessPieceTest {
         boolean notMovedYet = piece.hasNotMovedYet();
 
         // then
-        assertTrue(notMovedYet, format("Chess piece suppose to has not moved yet, but was. notMovedYet[%s] moveCount[%s].", notMovedYet, piece.moveCount));
+        assertTrue(notMovedYet, format("Chess piece suppose to has not moved yet, but was. notMovedYet[%s] moveCount[%s].", notMovedYet, piece.getMoveCount()));
     }
 
     @Test
@@ -380,7 +380,7 @@ public class ChessPieceTest {
         boolean notMovedYet = piece.hasNotMovedYet();
 
         // then
-        assertFalse(notMovedYet, format("Chess piece suppose to has moved again, but wasn't. notMovedYet[%s] moveCount[%s].", notMovedYet, piece.moveCount));
+        assertFalse(notMovedYet, format("Chess piece suppose to has moved again, but wasn't. notMovedYet[%s] moveCount[%s].", notMovedYet, piece.getMoveCount()));
     }
 
     @Test

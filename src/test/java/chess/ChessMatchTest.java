@@ -14,6 +14,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import chess.dummy.DummyChessMatch;
+import chess.pieces.King;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -335,7 +336,7 @@ public class ChessMatchTest {
 
     @Test
     public void shouldApplyMatchPropertiesOnNewerMatchWhenCloneChessMatch() {
-        // when
+        // given
         int turn = 1;
         boolean inCheck = false;
         boolean inCheckMate = false;
@@ -351,6 +352,23 @@ public class ChessMatchTest {
         assertEquals(inCheckMate, clonedMatch.isInCheckMate(), format("Cloned inCheckMate suppose to be equals inputted inCheckMate, but wasn't. inCheckMate [%s] clonedInCheckMate [%s]", inCheckMate, clonedMatch.isInCheckMate()));
         assertEquals(currentPlayer, clonedMatch.getCurrentPlayer(), format("Cloned currentPlayer suppose to be equals inputted currentPlayer, but wasn't. currentPlayer [%s] clonedCurrentPlayer [%s]", currentPlayer, clonedMatch.getCurrentPlayer()));
         verify(board).cloneIntoBoard(eq(clonedMatch.getBoard()));
+    }
+
+    @Test
+    public void shouldAskBoardIfCanDetectCheckForKingWhenTestingMatchCanDetectCheckForGivenKing() {
+        // given
+        int turn = 1;
+        boolean inCheck = false;
+        boolean inCheckMate = false;
+        Color currentPlayer = Color.WHITE;
+        DummyChessMatch match = new DummyChessMatch(board, currentPlayer, turn, inCheck, inCheckMate);
+        King king = mock(King.class);
+
+        // when
+        match.canDetectCheckFor(king);
+
+        // then
+        verify(board).canDetectCheckFor(eq(king));
     }
 
 }
