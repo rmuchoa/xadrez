@@ -1,5 +1,7 @@
 package chess.movement;
 
+import static java.lang.String.format;
+
 import chess.ChessException;
 import chess.ChessMovement;
 import chess.ChessPiece;
@@ -62,6 +64,19 @@ public class LineMovement extends ChessMovement {
         ChessPosition target = getNextPosition(current, direction);
 
         return new LineMovement(piece, piece.getPosition(), target, direction);
+    }
+
+    public static ChessPosition getNextPosition(ChessPosition source, MovementDirection direction) {
+        return switch (direction) {
+            case NORTH,
+                SOUTH,
+                EAST,
+                WEST -> ChessMovement.getNextPosition(source, direction);
+            case NORTHEAST,
+                NORTHWEST,
+                SOUTHEAST,
+                SOUTHWEST -> throw new ChessException(format("Invalid %s direction for LineMovement", direction));
+        };
     }
 
     @Override

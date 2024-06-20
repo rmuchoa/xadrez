@@ -57,10 +57,8 @@ public abstract class ChessMovement {
             try {
                 ChessMovement nextMovement = movement.buildNextMovement();
 
-                List<ChessMovement> allowedNextMovements = checkMovements(
-                    nextMovement,
-                    duration,
-                    decreaseMovementDistance(remainingMovements));
+                Integer decreasedMovementCounter = decreaseMovementDistance(remainingMovements);
+                List<ChessMovement> allowedNextMovements = checkMovements(nextMovement, duration, decreasedMovementCounter);
 
                 availableMovements.addAll(allowedNextMovements);
 

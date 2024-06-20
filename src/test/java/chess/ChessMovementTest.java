@@ -1,5 +1,7 @@
 package chess;
 
+import static chess.Color.WHITE;
+import static chess.movement.types.MovementType.LINE;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -44,6 +46,33 @@ public class ChessMovementTest {
     @BeforeEach
     public void setUp() {
         openMocks(this);
+    }
+
+    @Test
+    public void shouldMovementPropertiesBeTheSameAsGivenWhenBuildingMovement() {
+        // given
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).position(source).color(WHITE).build();
+
+        // when
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).source(source).target(target).movementType(LINE).build();
+
+        // then
+        assertEquals(piece, movement.getPiece(), format("Movement piece suppose to be given piece, but wasn't. expected[%s] piece[%s]", piece, movement.getPiece()));
+        assertEquals(source, movement.getSource(), format("Movement source position suppose to be given source position, but wasn't. expected[%s] sourcePosition[%s]", source, movement.getSource()));
+        assertEquals(target, movement.getTarget(), format("Movement target position suppose to be given target position, but wasn't. expected[%s] targetPosition[%s]", target, movement.getTarget()));
+        assertEquals(LINE, movement.getType(), format("Movement type suppose to be LINE, but wasn't. expected[%s] movementType[%s]", LINE, movement.getType()));
+    }
+
+    @Test
+    public void shouldMovementBoardBeTheSameOfPieceBoardWhenBuildingMovement() {
+        // given
+        DummyChessPiece piece = DummyChessPiece.builder().board(board).build();
+
+        // when
+        DummyChessMovement movement = DummyChessMovement.builder().piece(piece).build();
+
+        // then
+        assertEquals(movement.getBoard(), piece.getBoard(), format("Movement board suppose to be equals piece board, but wasn't. expected[%s] board[%s]", board, movement.getBoard()));
     }
 
     @Test
