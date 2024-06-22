@@ -4,6 +4,7 @@ import static chess.movement.types.MovementDirection.NORTHEAST;
 import static chess.movement.types.MovementDirection.NORTHWEST;
 import static chess.movement.types.MovementDirection.SOUTHEAST;
 import static chess.movement.types.MovementDirection.SOUTHWEST;
+import static java.lang.String.format;
 
 import chess.ChessException;
 import chess.ChessMovement;
@@ -81,6 +82,19 @@ public class PawnTakeMovement extends ChessMovement {
         return switch (pawn.getColor()) {
             case BLACK -> BLACK_ALLOWED_DIRECTIONS.contains(direction);
             case WHITE -> WHITE_ALLOWED_DIRECTIONS.contains(direction);
+        };
+    }
+
+    public static ChessPosition getNextPosition(ChessPosition source, MovementDirection direction) {
+        return switch (direction) {
+            case NORTHEAST,
+                NORTHWEST,
+                SOUTHEAST,
+                SOUTHWEST -> ChessMovement.getNextPosition(source, direction);
+            case NORTH,
+                SOUTH,
+                EAST,
+                WEST -> throw new ChessException(format("Invalid %s direction for PawnTakeMovement", direction));
         };
     }
 

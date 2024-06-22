@@ -400,7 +400,7 @@ public class LineMovementTest {
     }
 
     @Test
-    public void shouldDoNothingWhenAskingToLineMovementundoComposedMove() {
+    public void shouldDoNothingWhenAskingToLineMovementUndoComposedMove() {
         // given
         ChessPosition sourcePosition = new ChessPosition('a', 1);
         DummyChessPiece piece = DummyChessPiece.builder().board(board).position(sourcePosition).build();
