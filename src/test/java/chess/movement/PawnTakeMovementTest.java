@@ -41,8 +41,6 @@ public class PawnTakeMovementTest {
     private ChessBoard board;
     @Mock
     private Pawn pawn;
-    @Mock
-    private ChessPosition position;
 
     @BeforeEach
     public void setUp() {
@@ -280,13 +278,13 @@ public class PawnTakeMovementTest {
 
         // when
         PawnTakeMovement movement = PawnTakeMovement.buildMovement(pawn, NORTHEAST);
-        ChessMovement clonedMovement = movement.cloneMovement(pawn);
+        PawnTakeMovement clonedMovement = (PawnTakeMovement) movement.cloneMovement(pawn);
 
         // then
         assertEquals(clonedPiece, clonedMovement.getPiece());
         assertEquals(sourcePosition, clonedMovement.getSource());
         assertEquals(targetPosition, clonedMovement.getTarget());
-        assertEquals(NORTHEAST, ((PawnTakeMovement) clonedMovement).getDirection());
+        assertEquals(NORTHEAST, clonedMovement.getDirection());
     }
 
 }

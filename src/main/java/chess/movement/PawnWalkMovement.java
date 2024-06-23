@@ -1,5 +1,7 @@
 package chess.movement;
 
+import static java.lang.String.format;
+
 import chess.ChessException;
 import chess.ChessMovement;
 import chess.ChessPiece;
@@ -99,6 +101,19 @@ public class PawnWalkMovement extends ChessMovement {
         return switch (pawn.getColor()) {
             case BLACK -> MovementDirection.SOUTH;
             case WHITE -> MovementDirection.NORTH;
+        };
+    }
+
+    public static ChessPosition getNextPosition(ChessPosition source, MovementDirection direction) {
+        return switch (direction) {
+            case NORTH,
+                SOUTH -> ChessMovement.getNextPosition(source, direction);
+            case EAST,
+                WEST,
+                NORTHEAST,
+                NORTHWEST,
+                SOUTHEAST,
+                SOUTHWEST -> throw new ChessException(format("Invalid %s direction for PawnWalkMovement", direction));
         };
     }
 

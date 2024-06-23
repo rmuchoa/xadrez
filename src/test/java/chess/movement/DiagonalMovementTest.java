@@ -423,13 +423,13 @@ public class DiagonalMovementTest {
 
         // when
         DiagonalMovement movement = DiagonalMovement.buildMovement(piece, sourcePosition, NORTHEAST);
-        ChessMovement clonedMovement = movement.cloneMovement(clonedPiece);
+        DiagonalMovement clonedMovement = (DiagonalMovement) movement.cloneMovement(clonedPiece);
 
         // then
         assertEquals(clonedPiece, clonedMovement.getPiece());
         assertEquals(sourcePosition, clonedMovement.getSource());
         assertEquals(targetPosition, clonedMovement.getTarget());
-        assertEquals(NORTHEAST, ((DiagonalMovement) clonedMovement).getDirection());
+        assertEquals(NORTHEAST, clonedMovement.getDirection());
     }
 
 }

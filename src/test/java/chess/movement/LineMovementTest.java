@@ -423,13 +423,13 @@ public class LineMovementTest {
 
         // when
         LineMovement movement = LineMovement.buildMovement(piece, sourcePosition, NORTH);
-        ChessMovement clonedMovement = movement.cloneMovement(clonedPiece);
+        LineMovement clonedMovement = (LineMovement) movement.cloneMovement(clonedPiece);
 
         // then
         assertEquals(clonedPiece, clonedMovement.getPiece());
         assertEquals(sourcePosition, clonedMovement.getSource());
         assertEquals(targetPosition, clonedMovement.getTarget());
-        assertEquals(NORTH, ((LineMovement) clonedMovement).getDirection());
+        assertEquals(NORTH, clonedMovement.getDirection());
     }
 
 }
